@@ -68,7 +68,7 @@ export class AccountSwitcherComponent implements OnInit, OnDestroy {
   activeAccount?: ActiveAccount;
   serverUrl: string;
   authStatus = AuthenticationStatus;
-  overlayPosition: ConnectedPosition[] = [
+  overlayPostition: ConnectedPosition[] = [
     {
       originX: "end",
       originY: "bottom",

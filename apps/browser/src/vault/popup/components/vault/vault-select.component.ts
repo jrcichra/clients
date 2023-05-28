@@ -62,7 +62,7 @@ export class VaultSelectComponent implements OnInit, OnDestroy {
   selectedVault$: Observable<string | null> = this._selectedVault.asObservable();
 
   enforcePersonalOwnership = false;
-  overlayPosition: ConnectedPosition[] = [
+  overlayPostition: ConnectedPosition[] = [
     {
       originX: "start",
       originY: "bottom",
@@ -149,7 +149,7 @@ export class VaultSelectComponent implements OnInit, OnDestroy {
       .withPush(true)
       .withViewportMargin(10)
       .withGrowAfterOpen(true)
-      .withPositions(this.overlayPosition);
+      .withPositions(this.overlayPostition);
 
     this.overlayRef = this.overlay.create({
       hasBackdrop: true,

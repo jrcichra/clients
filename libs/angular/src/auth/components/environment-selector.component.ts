@@ -39,7 +39,7 @@ export class EnvironmentSelectorComponent implements OnInit, OnDestroy {
   showingModal = false;
   selectedEnvironment: ServerEnvironment;
   ServerEnvironmentType = ServerEnvironment;
-  overlayPosition: ConnectedPosition[] = [
+  overlayPostition: ConnectedPosition[] = [
     {
       originX: "start",
       originY: "bottom",
