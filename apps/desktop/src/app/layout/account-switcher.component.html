@@ -8,7 +8,6 @@
   #trigger="cdkOverlayOrigin"
   [hidden]="!showSwitcher"
   aria-haspopup="dialog"
-  aria-controls="cdk-overlay-container"
 >
   <span>{{ "switchAccount" | i18n }}</span>
   <i
@@ -26,8 +25,7 @@
   #trigger="cdkOverlayOrigin"
   [hidden]="!showSwitcher"
   aria-haspopup="dialog"
-  aria-controls="cdk-overlay-container"
-  attr.aria-label="{{ activeAccount.name }} ({{ 'switchAccount' | i18n }})"
+  attr.aria-label="{{ activeAccount.email }} ({{ 'switchAccount' | i18n }})"
 >
   <app-avatar
     [text]="activeAccount.name"
