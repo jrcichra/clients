@@ -6,9 +6,8 @@
   cdkOverlayOrigin
   #trigger="cdkOverlayOrigin"
   [hidden]="!showSwitcher"
-  aria-haspopup="menu"
+  aria-haspopup="dialog"
   aria-controls="cdk-overlay-container"
-  [attr.aria-expanded]="isOpen"
 >
   <ng-container *ngIf="activeAccount?.email != null; else noActiveAccount">
     <app-avatar
