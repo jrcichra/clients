@@ -1,7 +1,6 @@
 <!-- Please remove this disable statement when editing this file! -->
 <!-- eslint-disable @angular-eslint/template/button-has-type -->
 <button
-  *ngIf="activeAccount?.email == null"
   class="account-switcher"
   (click)="toggle()"
   cdkOverlayOrigin
@@ -9,35 +8,25 @@
   [hidden]="!showSwitcher"
   aria-haspopup="dialog"
 >
-  <span>{{ "switchAccount" | i18n }}</span>
-  <i
-    class="bwi"
-    aria-hidden="true"
-    [ngClass]="{ 'bwi-angle-down': !isOpen, 'bwi-angle-up': isOpen }"
-  ></i>
-</button>
-
-<button
-  *ngIf="activeAccount?.email != null"
-  class="account-switcher"
-  (click)="toggle()"
-  cdkOverlayOrigin
-  #trigger="cdkOverlayOrigin"
-  [hidden]="!showSwitcher"
-  aria-haspopup="dialog"
-  attr.aria-label="{{ activeAccount.email }} ({{ 'switchAccount' | i18n }})"
->
-  <app-avatar
-    [text]="activeAccount.name"
-    [id]="activeAccount.id"
-    [color]="activeAccount.avatarColor"
-    [size]="25"
-    [circle]="true"
-    [fontSize]="14"
-    [dynamic]="true"
-    aria-hidden="true"
-  ></app-avatar>
-  <span>{{ activeAccount.email }}</span>
+  <ng-container *ngIf="activeAccount?.email != null; else noActiveAccount">
+    <app-avatar
+      [text]="activeAccount.name"
+      [id]="activeAccount.id"
+      [color]="activeAccount.avatarColor"
+      [size]="25"
+      [circle]="true"
+      [fontSize]="14"
+      [dynamic]="true"
+      *ngIf="activeAccount.email != null"
+      aria-hidden="true"
+    ></app-avatar>
+    <span
+      >{{ activeAccount.email }}<span class="sr-only"> ({{ "switchAccount" | i18n }})</span></span
+    >
+  </ng-container>
+  <ng-template #noActiveAccount>
+    <span>{{ "switchAccount" | i18n }}</span>
+  </ng-template>
   <i
     class="bwi"
     aria-hidden="true"
@@ -53,7 +42,7 @@
   (backdropClick)="close()"
   (detach)="close()"
   [cdkConnectedOverlayOpen]="showSwitcher && isOpen"
-  [cdkConnectedOverlayPositions]="overlayPosition"
+  [cdkConnectedOverlayPositions]="overlayPostition"
   cdkConnectedOverlayMinWidth="250px"
 >
   <div
