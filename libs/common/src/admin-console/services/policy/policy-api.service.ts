@@ -85,19 +85,6 @@ export class PolicyApiService implements PolicyApiServiceAbstraction {
     return new ListResponse(r, PolicyResponse);
   }
 
-  /**
-   * @deprecated Use `getMasterPasswordPolicyOptsForOrgUser` instead
-   * TODO: PM-??? remove this with 2024.01.0 release + remove from mobile
-   */
-  async getMasterPasswordPoliciesForInvitedUsers(
-    orgId: string
-  ): Promise<MasterPasswordPolicyOptions> {
-    const userId = await this.stateService.getUserId();
-    const response = await this.getPoliciesByInvitedUser(orgId, userId);
-    const policies = await this.policyService.mapPoliciesFromToken(response);
-    return await firstValueFrom(this.policyService.masterPasswordPolicyOptions$(policies));
-  }
-
   private async getMasterPasswordPolicyResponseForOrgUser(
     organizationId: string
   ): Promise<PolicyResponse> {
