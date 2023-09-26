@@ -75,6 +75,7 @@ export class SetPasswordComponent extends BaseChangePasswordComponent {
         this.orgSsoIdentifier = qParams.identifier;
       } else {
         // Try to get orgSsoId from state as fallback
+        // Note: this is primarily for the TDE user w/out MP obtains admin MP reset permission scenario.
         const orgSsoId = await this.stateService.getUserSsoOrganizationIdentifier();
         if (orgSsoId) {
           this.orgSsoIdentifier = orgSsoId;
