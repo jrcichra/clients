@@ -124,6 +124,7 @@ export const RightStart: Story = {
           type="button"
           class="tw-border-none tw-bg-transparent tw-text-primary-500"
           [bitPopoverTriggerFor]="myPopover"
+          #triggerRef="popoverTrigger"
           [position]="'${args.position}'"
         >
           <i class="bwi bwi-question-circle"></i>
@@ -146,6 +147,7 @@ export const RightCenter: Story = {
           type="button"
           class="tw-border-none tw-bg-transparent tw-text-primary-500"
           [bitPopoverTriggerFor]="myPopover"
+          #triggerRef="popoverTrigger"
           [position]="'${args.position}'"
         >
           <i class="bwi bwi-question-circle"></i>
@@ -168,6 +170,7 @@ export const RightEnd: Story = {
           type="button"
           class="tw-border-none tw-bg-transparent tw-text-primary-500"
           [bitPopoverTriggerFor]="myPopover"
+          #triggerRef="popoverTrigger"
           [position]="'${args.position}'"
         >
           <i class="bwi bwi-question-circle"></i>
@@ -190,6 +193,7 @@ export const LeftStart: Story = {
           type="button"
           class="tw-border-none tw-bg-transparent tw-text-primary-500"
           [bitPopoverTriggerFor]="myPopover"
+          #triggerRef="popoverTrigger"
           [position]="'${args.position}'"
         >
           <i class="bwi bwi-question-circle"></i>
@@ -212,6 +216,7 @@ export const LeftCenter: Story = {
           type="button"
           class="tw-border-none tw-bg-transparent tw-text-primary-500"
           [bitPopoverTriggerFor]="myPopover"
+          #triggerRef="popoverTrigger"
           [position]="'${args.position}'"
         >
           <i class="bwi bwi-question-circle"></i>
@@ -233,6 +238,7 @@ export const LeftEnd: Story = {
           type="button"
           class="tw-border-none tw-bg-transparent tw-text-primary-500"
           [bitPopoverTriggerFor]="myPopover"
+          #triggerRef="popoverTrigger"
           [position]="'${args.position}'"
         >
           <i class="bwi bwi-question-circle"></i>
@@ -255,6 +261,7 @@ export const BelowStart: Story = {
           type="button"
           class="tw-border-none tw-bg-transparent tw-text-primary-500"
           [bitPopoverTriggerFor]="myPopover"
+          #triggerRef="popoverTrigger"
           [position]="'${args.position}'"
         >
           <i class="bwi bwi-question-circle"></i>
@@ -277,6 +284,7 @@ export const BelowCenter: Story = {
           type="button"
           class="tw-border-none tw-bg-transparent tw-text-primary-500"
           [bitPopoverTriggerFor]="myPopover"
+          #triggerRef="popoverTrigger"
           [position]="'${args.position}'"
         >
           <i class="bwi bwi-question-circle"></i>
@@ -299,6 +307,7 @@ export const BelowEnd: Story = {
           type="button"
           class="tw-border-none tw-bg-transparent tw-text-primary-500"
           [bitPopoverTriggerFor]="myPopover"
+          #triggerRef="popoverTrigger"
           [position]="'${args.position}'"
         >
           <i class="bwi bwi-question-circle"></i>
@@ -321,6 +330,7 @@ export const AboveStart: Story = {
           type="button"
           class="tw-border-none tw-bg-transparent tw-text-primary-500"
           [bitPopoverTriggerFor]="myPopover"
+          #triggerRef="popoverTrigger"
           [position]="'${args.position}'"
         >
           <i class="bwi bwi-question-circle"></i>
@@ -343,6 +353,7 @@ export const AboveCenter: Story = {
           type="button"
           class="tw-border-none tw-bg-transparent tw-text-primary-500"
           [bitPopoverTriggerFor]="myPopover"
+          #triggerRef="popoverTrigger"
           [position]="'${args.position}'"
         >
           <i class="bwi bwi-question-circle"></i>
@@ -365,6 +376,7 @@ export const AboveEnd: Story = {
           type="button"
           class="tw-border-none tw-bg-transparent tw-text-primary-500"
           [bitPopoverTriggerFor]="myPopover"
+          #triggerRef="popoverTrigger"
           [position]="'${args.position}'"
         >
           <i class="bwi bwi-question-circle"></i>
