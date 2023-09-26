@@ -30,7 +30,7 @@ export class SetPasswordComponent extends BaseChangePasswordComponent {
   syncLoading = true;
   showPassword = false;
   hint = "";
-  identifier: string = null;
+  orgSsoIdentifier: string = null;
   orgId: string;
   resetPasswordAutoEnroll = false;
   onSuccessfulChangePassword: () => Promise<void>;
@@ -72,14 +72,16 @@ export class SetPasswordComponent extends BaseChangePasswordComponent {
     // eslint-disable-next-line rxjs/no-async-subscribe
     this.route.queryParams.pipe(first()).subscribe(async (qParams) => {
       if (qParams.identifier != null) {
-        this.identifier = qParams.identifier;
+        this.orgSsoIdentifier = qParams.identifier;
       }
     });
 
     // Automatic Enrollment Detection
-    if (this.identifier != null) {
+    if (this.orgSsoIdentifier != null) {
       try {
-        const response = await this.organizationApiService.getAutoEnrollStatus(this.identifier);
+        const response = await this.organizationApiService.getAutoEnrollStatus(
+          this.orgSsoIdentifier
+        );
         this.orgId = response.id;
         this.resetPasswordAutoEnroll = response.resetPasswordEnabled;
 
@@ -109,7 +111,7 @@ export class SetPasswordComponent extends BaseChangePasswordComponent {
       masterPasswordHash,
       userKey[1].encryptedString,
       this.hint,
-      this.identifier,
+      this.orgSsoIdentifier,
       new KeysRequest(newKeyPair[0], newKeyPair[1].encryptedString),
       this.kdf,
       this.kdfConfig.iterations,
