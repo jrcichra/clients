@@ -106,7 +106,7 @@ export class PopoverTriggerForDirective implements OnDestroy {
     this.overlayRef?.dispose();
   }
 
-  closePopover() {
+  close() {
     this.destroyPopover();
   }
 }

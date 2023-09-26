@@ -18,26 +18,6 @@
         </div>
         <div class="tw-px-4">
           <ng-content></ng-content>
-          <div class="tw-mt-4 tw-flex tw-gap-1" *ngIf="isWalkthrough">
-            <button
-              *ngIf="showNextBtn"
-              type="button"
-              bitButton
-              buttonType="primary"
-              (click)="next()"
-            >
-              Next
-            </button>
-            <button
-              *ngIf="showBackBtn"
-              type="button"
-              bitButton
-              buttonType="secondary"
-              (click)="back()"
-            >
-              Back
-            </button>
-          </div>
         </div>
       </div>
     </div>
