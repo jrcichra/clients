@@ -73,6 +73,12 @@ export class SetPasswordComponent extends BaseChangePasswordComponent {
     this.route.queryParams.pipe(first()).subscribe(async (qParams) => {
       if (qParams.identifier != null) {
         this.orgSsoIdentifier = qParams.identifier;
+      } else {
+        // Try to get orgSsoId from state as fallback
+        const orgSsoId = await this.stateService.getUserSsoOrganizationIdentifier();
+        if (orgSsoId) {
+          this.orgSsoIdentifier = orgSsoId;
+        }
       }
     });
 
