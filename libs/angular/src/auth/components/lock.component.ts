@@ -337,10 +337,6 @@ export class LockComponent implements OnInit, OnDestroy {
       }
     }
 
-    // TODO: we have to have the guard so that users can't navigate away from the set password screen
-    // TODO: add flag to sync
-    // TOOD: try to log TDE user out when obtains elevated permission
-
     // For TDE users without MP who have permissions elevated to be able to perform acct recovery,
     // we require that they set a password before continuing to the vault:
     const acctDecryptionOpts: AccountDecryptionOptions =
