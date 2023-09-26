@@ -207,11 +207,7 @@ export class SsoComponent {
       );
 
       if (tdeEnabled) {
-        return await this.handleTrustedDeviceEncryptionEnabled(
-          authResult,
-          orgIdentifier,
-          acctDecryptionOpts
-        );
+        return await this.handleTrustedDeviceEncryptionEnabled(authResult, orgIdentifier);
       }
 
       // In the standard, non TDE case, a user must set password if they don't
@@ -264,23 +260,8 @@ export class SsoComponent {
 
   private async handleTrustedDeviceEncryptionEnabled(
     authResult: AuthResult,
-    orgIdentifier: string,
-    acctDecryptionOpts: AccountDecryptionOptions
+    orgIdentifier: string
   ): Promise<void> {
-    // TODO: we can't set a password until after decryption for a TDE user who obtained elevated permissions
-    // as they can have already created vault items with their initial user key and
-    // the set password process will not have access to their initial user key just yet
-    // and it will create a new one. This will cause a decryption failure on the vault items
-
-    // If user doesn't have a MP, but has reset password permission, they must set a MP
-    // if (
-    //   !acctDecryptionOpts.hasMasterPassword &&
-    //   acctDecryptionOpts.trustedDeviceOption.hasManageResetPasswordPermission
-    // ) {
-    //   // Change implies going no password -> password in this case
-    //   return await this.handleChangePasswordRequired(orgIdentifier);
-    // }
-
     if (authResult.forcePasswordReset !== ForceSetPasswordReason.None) {
       return await this.handleForcePasswordReset(orgIdentifier);
     }

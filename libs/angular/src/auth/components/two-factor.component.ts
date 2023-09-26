@@ -243,11 +243,7 @@ export class TwoFactorComponent extends CaptchaProtectedComponent implements OnI
     const tdeEnabled = await this.isTrustedDeviceEncEnabled(acctDecryptionOpts.trustedDeviceOption);
 
     if (tdeEnabled) {
-      return await this.handleTrustedDeviceEncryptionEnabled(
-        authResult,
-        this.orgIdentifier,
-        acctDecryptionOpts
-      );
+      return await this.handleTrustedDeviceEncryptionEnabled(authResult, this.orgIdentifier);
     }
 
     // User must set password if they don't have one and they aren't using either TDE or key connector.
@@ -285,18 +281,8 @@ export class TwoFactorComponent extends CaptchaProtectedComponent implements OnI
 
   private async handleTrustedDeviceEncryptionEnabled(
     authResult: AuthResult,
-    orgIdentifier: string,
-    acctDecryptionOpts: AccountDecryptionOptions
+    orgIdentifier: string
   ): Promise<void> {
-    // If user doesn't have a MP, but has reset password permission, they must set a MP
-    // if (
-    //   !acctDecryptionOpts.hasMasterPassword &&
-    //   acctDecryptionOpts.trustedDeviceOption.hasManageResetPasswordPermission
-    // ) {
-    //   // Change implies going no password -> password in this case
-    //   return await this.handleChangePasswordRequired(orgIdentifier);
-    // }
-
     // Users can be forced to reset their password via an admin or org policy disallowing weak passwords
     // Note: this is different from SSO component login flow as a user can
     // login with MP and then have to pass 2FA to finish login and we can actually
