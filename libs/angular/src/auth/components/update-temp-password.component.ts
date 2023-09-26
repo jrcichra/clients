@@ -72,7 +72,7 @@ export class UpdateTempPasswordComponent extends BaseChangePasswordComponent {
   async ngOnInit() {
     await this.syncService.fullSync(true);
 
-    this.reason = await this.stateService.getForcePasswordResetReason();
+    this.reason = await this.stateService.getForceSetPasswordReason();
 
     // If we somehow end up here without a reason, go back to the home page
     if (this.reason == ForceSetPasswordReason.None) {
@@ -161,7 +161,7 @@ export class UpdateTempPasswordComponent extends BaseChangePasswordComponent {
         this.i18nService.t("updatedMasterPassword")
       );
 
-      await this.stateService.setForcePasswordResetReason(ForceSetPasswordReason.None);
+      await this.stateService.setForceSetPasswordReason(ForceSetPasswordReason.None);
 
       if (this.onSuccessfulChangePassword != null) {
         this.onSuccessfulChangePassword();

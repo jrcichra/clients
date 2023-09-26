@@ -315,29 +315,7 @@ export class SyncService implements SyncServiceAbstraction {
     await this.stateService.setHasPremiumFromOrganization(response.premiumFromOrganization);
     await this.keyConnectorService.setUsesKeyConnector(response.usesKeyConnector);
 
-    // TODO: consider encapsulating set password logic in a separate method
-    // The `forcePasswordReset` flag indicates an admin has reset the user's password and must be updated
-    if (response.forcePasswordReset) {
-      await this.stateService.setForcePasswordResetReason(
-        ForceSetPasswordReason.AdminForcePasswordReset
-      );
-    }
-
-    const acctDecryptionOpts: AccountDecryptionOptions =
-      await this.stateService.getAccountDecryptionOptions();
-
-    if (
-      acctDecryptionOpts.trustedDeviceOption !== undefined &&
-      !acctDecryptionOpts.hasMasterPassword &&
-      !acctDecryptionOpts.trustedDeviceOption.hasManageResetPasswordPermission &&
-      response.hasManageResetPasswordPermission
-    ) {
-      // TDE user w/out MP went from having no password reset permission to having it.
-      // Must set the force password reset reason so the auth guard will redirect to the set password page.
-      await this.stateService.setForcePasswordResetReason(
-        ForceSetPasswordReason.TdeUserWithoutPasswordHasPasswordResetPermission
-      );
-    }
+    await this.setForceSetPasswordReasonIfNeeded(response);
 
     await this.syncProfileOrganizations(response);
 
@@ -353,6 +331,31 @@ export class SyncService implements SyncServiceAbstraction {
       this.messagingService.send("convertAccountToKeyConnector");
     } else {
       this.keyConnectorService.removeConvertAccountRequired();
+    }
+  }
+
+  private async setForceSetPasswordReasonIfNeeded(response: ProfileResponse) {
+    // The `forcePasswordReset` flag indicates an admin has reset the user's password and must be updated
+    if (response.forcePasswordReset) {
+      await this.stateService.setForceSetPasswordReason(
+        ForceSetPasswordReason.AdminForcePasswordReset
+      );
+    }
+
+    const acctDecryptionOpts: AccountDecryptionOptions =
+      await this.stateService.getAccountDecryptionOptions();
+
+    if (
+      acctDecryptionOpts.trustedDeviceOption !== undefined &&
+      !acctDecryptionOpts.hasMasterPassword &&
+      !acctDecryptionOpts.trustedDeviceOption.hasManageResetPasswordPermission &&
+      response.hasManageResetPasswordPermission
+    ) {
+      // TDE user w/out MP went from having no password reset permission to having it.
+      // Must set the force password reset reason so the auth guard will redirect to the set password page.
+      await this.stateService.setForceSetPasswordReason(
+        ForceSetPasswordReason.TdeUserWithoutPasswordHasPasswordResetPermission
+      );
     }
   }
 

@@ -174,7 +174,7 @@ describe("PasswordLogInStrategy", () => {
     const result = await passwordLogInStrategy.logIn(credentials);
 
     expect(policyService.evaluateMasterPassword).toHaveBeenCalled();
-    expect(stateService.setForcePasswordResetReason).toHaveBeenCalledWith(
+    expect(stateService.setForceSetPasswordReason).toHaveBeenCalledWith(
       ForceSetPasswordReason.WeakMasterPassword
     );
     expect(result.forcePasswordReset).toEqual(ForceSetPasswordReason.WeakMasterPassword);
@@ -213,7 +213,7 @@ describe("PasswordLogInStrategy", () => {
     expect(firstResult.forcePasswordReset).toEqual(ForceSetPasswordReason.None);
 
     // Second login attempt should save the force password reset options and return in result
-    expect(stateService.setForcePasswordResetReason).toHaveBeenCalledWith(
+    expect(stateService.setForceSetPasswordReason).toHaveBeenCalledWith(
       ForceSetPasswordReason.WeakMasterPassword
     );
     expect(secondResult.forcePasswordReset).toEqual(ForceSetPasswordReason.WeakMasterPassword);

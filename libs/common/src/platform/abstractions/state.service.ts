@@ -391,8 +391,8 @@ export abstract class StateService<T extends Account = Account> {
   setEverHadUserKey: (value: boolean, options?: StorageOptions) => Promise<void>;
   getEverBeenUnlocked: (options?: StorageOptions) => Promise<boolean>;
   setEverBeenUnlocked: (value: boolean, options?: StorageOptions) => Promise<void>;
-  getForcePasswordResetReason: (options?: StorageOptions) => Promise<ForceSetPasswordReason>;
-  setForcePasswordResetReason: (
+  getForceSetPasswordReason: (options?: StorageOptions) => Promise<ForceSetPasswordReason>;
+  setForceSetPasswordReason: (
     value: ForceSetPasswordReason,
     options?: StorageOptions
   ) => Promise<void>;

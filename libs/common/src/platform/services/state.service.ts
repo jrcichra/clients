@@ -2034,7 +2034,7 @@ export class StateService<
     );
   }
 
-  async getForcePasswordResetReason(options?: StorageOptions): Promise<ForceSetPasswordReason> {
+  async getForceSetPasswordReason(options?: StorageOptions): Promise<ForceSetPasswordReason> {
     return (
       (
         await this.getAccount(
@@ -2044,7 +2044,7 @@ export class StateService<
     );
   }
 
-  async setForcePasswordResetReason(
+  async setForceSetPasswordReason(
     value: ForceSetPasswordReason,
     options?: StorageOptions
   ): Promise<void> {

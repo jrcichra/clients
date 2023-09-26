@@ -76,7 +76,7 @@ export class SsoLogInStrategy extends LogInStrategy {
 
     // Auth guard currently handles redirects for this.
     if (ssoAuthResult.forcePasswordReset == ForceSetPasswordReason.AdminForcePasswordReset) {
-      await this.stateService.setForcePasswordResetReason(ssoAuthResult.forcePasswordReset);
+      await this.stateService.setForceSetPasswordReason(ssoAuthResult.forcePasswordReset);
     }
 
     return ssoAuthResult;

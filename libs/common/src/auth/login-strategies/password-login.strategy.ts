@@ -84,7 +84,7 @@ export class PasswordLogInStrategy extends LogInStrategy {
       !result.requiresCaptcha &&
       this.forcePasswordResetReason != ForceSetPasswordReason.None
     ) {
-      await this.stateService.setForcePasswordResetReason(this.forcePasswordResetReason);
+      await this.stateService.setForceSetPasswordReason(this.forcePasswordResetReason);
       result.forcePasswordReset = this.forcePasswordResetReason;
     }
 
@@ -131,7 +131,7 @@ export class PasswordLogInStrategy extends LogInStrategy {
           this.forcePasswordResetReason = ForceSetPasswordReason.WeakMasterPassword;
         } else {
           // Authentication was successful, save the force update password options with the state service
-          await this.stateService.setForcePasswordResetReason(
+          await this.stateService.setForceSetPasswordReason(
             ForceSetPasswordReason.WeakMasterPassword
           );
           authResult.forcePasswordReset = ForceSetPasswordReason.WeakMasterPassword;

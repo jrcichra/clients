@@ -40,8 +40,7 @@ export class AuthGuard implements CanActivate {
       return this.router.createUrlTree(["/remove-password"]);
     }
 
-    // TODO: consider creating a new guard for this logic
-    const forcePasswordResetReason = await this.stateService.getForcePasswordResetReason();
+    const forcePasswordResetReason = await this.stateService.getForceSetPasswordReason();
 
     if (
       forcePasswordResetReason ===
