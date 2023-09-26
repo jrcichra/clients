@@ -13,9 +13,10 @@ import {
   ForwarderOptions,
   SimpleLoginForwarder,
 } from "./email-forwarders";
+import { UsernameGeneratorOptions } from "./username-generation-options";
 import { UsernameGenerationServiceAbstraction } from "./username-generation.service.abstraction";
 
-const DefaultOptions = {
+const DefaultOptions: UsernameGeneratorOptions = {
   type: "word",
   wordCapitalize: true,
   wordIncludeNumber: true,
@@ -23,6 +24,7 @@ const DefaultOptions = {
   catchallType: "random",
   forwardedService: "",
   forwardedAnonAddyDomain: "anonaddy.me",
+  forwardedAnonAddyBaseUrl: "https://app.addy.io",
   forwardedForwardEmailDomain: "hideaddress.net",
   forwardedSimpleLoginBaseUrl: "https://app.simplelogin.io",
 };
@@ -34,7 +36,7 @@ export class UsernameGenerationService implements UsernameGenerationServiceAbstr
     private apiService: ApiService
   ) {}
 
-  generateUsername(options: any): Promise<string> {
+  generateUsername(options: UsernameGeneratorOptions): Promise<string> {
     if (options.type === "catchall") {
       return this.generateCatchall(options);
     } else if (options.type === "subaddress") {
@@ -46,7 +48,7 @@ export class UsernameGenerationService implements UsernameGenerationServiceAbstr
     }
   }
 
-  async generateWord(options: any): Promise<string> {
+  async generateWord(options: UsernameGeneratorOptions): Promise<string> {
     const o = Object.assign({}, DefaultOptions, options);
 
     if (o.wordCapitalize == null) {
@@ -68,7 +70,7 @@ export class UsernameGenerationService implements UsernameGenerationServiceAbstr
     return word;
   }
 
-  async generateSubaddress(options: any): Promise<string> {
+  async generateSubaddress(options: UsernameGeneratorOptions): Promise<string> {
     const o = Object.assign({}, DefaultOptions, options);
 
     const subaddressEmail = o.subaddressEmail;
@@ -95,7 +97,7 @@ export class UsernameGenerationService implements UsernameGenerationServiceAbstr
     return emailBeginning + "+" + subaddressString + "@" + emailEnding;
   }
 
-  async generateCatchall(options: any): Promise<string> {
+  async generateCatchall(options: UsernameGeneratorOptions): Promise<string> {
     const o = Object.assign({}, DefaultOptions, options);
 
     if (o.catchallDomain == null || o.catchallDomain === "") {
@@ -114,7 +116,7 @@ export class UsernameGenerationService implements UsernameGenerationServiceAbstr
     return startString + "@" + o.catchallDomain;
   }
 
-  async generateForwarded(options: any): Promise<string> {
+  async generateForwarded(options: UsernameGeneratorOptions): Promise<string> {
     const o = Object.assign({}, DefaultOptions, options);
 
     if (o.forwardedService == null) {
@@ -132,6 +134,7 @@ export class UsernameGenerationService implements UsernameGenerationServiceAbstr
       forwarder = new AnonAddyForwarder();
       forwarderOptions.apiKey = o.forwardedAnonAddyApiToken;
       forwarderOptions.anonaddy.domain = o.forwardedAnonAddyDomain;
+      forwarderOptions.anonaddy.baseUrl = o.forwardedAnonAddyBaseUrl;
     } else if (o.forwardedService === "firefoxrelay") {
       forwarder = new FirefoxRelayForwarder();
       forwarderOptions.apiKey = o.forwardedFirefoxApiToken;
@@ -154,7 +157,7 @@ export class UsernameGenerationService implements UsernameGenerationServiceAbstr
     return forwarder.generate(this.apiService, forwarderOptions);
   }
 
-  async getOptions(): Promise<any> {
+  async getOptions(): Promise<UsernameGeneratorOptions> {
     let options = await this.stateService.getUsernameGenerationOptions();
     if (options == null) {
       options = Object.assign({}, DefaultOptions);
@@ -165,7 +168,7 @@ export class UsernameGenerationService implements UsernameGenerationServiceAbstr
     return options;
   }
 
-  async saveOptions(options: any) {
+  async saveOptions(options: UsernameGeneratorOptions) {
     await this.stateService.setUsernameGenerationOptions(options);
   }
 

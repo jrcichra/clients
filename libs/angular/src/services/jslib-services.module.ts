@@ -77,7 +77,6 @@ import { I18nService as I18nServiceAbstraction } from "@bitwarden/common/platfor
 import { LogService } from "@bitwarden/common/platform/abstractions/log.service";
 import { MessagingService as MessagingServiceAbstraction } from "@bitwarden/common/platform/abstractions/messaging.service";
 import { PlatformUtilsService as PlatformUtilsServiceAbstraction } from "@bitwarden/common/platform/abstractions/platform-utils.service";
-import { StateMigrationService as StateMigrationServiceAbstraction } from "@bitwarden/common/platform/abstractions/state-migration.service";
 import { StateService as StateServiceAbstraction } from "@bitwarden/common/platform/abstractions/state.service";
 import { AbstractStorageService } from "@bitwarden/common/platform/abstractions/storage.service";
 import { ValidationService as ValidationServiceAbstraction } from "@bitwarden/common/platform/abstractions/validation.service";
@@ -94,7 +93,6 @@ import { EncryptServiceImplementation } from "@bitwarden/common/platform/service
 import { MultithreadEncryptServiceImplementation } from "@bitwarden/common/platform/services/cryptography/multithread-encrypt.service.implementation";
 import { EnvironmentService } from "@bitwarden/common/platform/services/environment.service";
 import { FileUploadService } from "@bitwarden/common/platform/services/file-upload/file-upload.service";
-import { StateMigrationService } from "@bitwarden/common/platform/services/state-migration.service";
 import { StateService } from "@bitwarden/common/platform/services/state.service";
 import { ValidationService } from "@bitwarden/common/platform/services/validation.service";
 import { WebCryptoFunctionService } from "@bitwarden/common/platform/services/web-crypto-function.service";
@@ -452,35 +450,7 @@ import { AbstractThemingService } from "./theming/theming.service.abstraction";
     },
     {
       provide: VaultTimeoutService,
-      useFactory: (
-        cipherService: CipherServiceAbstraction,
-        folderService: FolderServiceAbstraction,
-        collectionService: CollectionServiceAbstraction,
-        cryptoService: CryptoServiceAbstraction,
-        platformUtilsService: PlatformUtilsServiceAbstraction,
-        messagingService: MessagingServiceAbstraction,
-        searchService: SearchServiceAbstraction,
-        stateService: StateServiceAbstraction,
-        authService: AuthServiceAbstraction,
-        vaultTimeoutSettingsService: VaultTimeoutSettingsServiceAbstraction,
-        lockedCallback: (userId?: string) => Promise<void>,
-        logoutCallback: (expired: boolean, userId?: string) => Promise<void>
-      ) => {
-        return new VaultTimeoutService(
-          cipherService,
-          folderService,
-          collectionService,
-          cryptoService,
-          platformUtilsService,
-          messagingService,
-          searchService,
-          stateService,
-          authService,
-          vaultTimeoutSettingsService,
-          lockedCallback,
-          logoutCallback
-        );
-      },
+      useClass: VaultTimeoutService,
       deps: [
         CipherServiceAbstraction,
         FolderServiceAbstraction,
@@ -508,15 +478,9 @@ import { AbstractThemingService } from "./theming/theming.service.abstraction";
         SECURE_STORAGE,
         MEMORY_STORAGE,
         LogService,
-        StateMigrationServiceAbstraction,
         STATE_FACTORY,
         STATE_SERVICE_USE_CACHE,
       ],
-    },
-    {
-      provide: StateMigrationServiceAbstraction,
-      useClass: StateMigrationService,
-      deps: [AbstractStorageService, SECURE_STORAGE, STATE_FACTORY],
     },
     {
       provide: VaultExportServiceAbstraction,
@@ -600,8 +564,6 @@ import { AbstractThemingService } from "./theming/theming.service.abstraction";
         LogService,
         OrganizationServiceAbstraction,
         CryptoFunctionServiceAbstraction,
-        SyncNotifierServiceAbstraction,
-        MessagingServiceAbstraction,
         LOGOUT_CALLBACK,
       ],
     },
@@ -678,14 +640,19 @@ import { AbstractThemingService } from "./theming/theming.service.abstraction";
       useClass: SyncNotifierService,
     },
     {
-      provide: ConfigServiceAbstraction,
+      provide: ConfigService,
       useClass: ConfigService,
       deps: [
         StateServiceAbstraction,
         ConfigApiServiceAbstraction,
         AuthServiceAbstraction,
         EnvironmentServiceAbstraction,
+        LogService,
       ],
+    },
+    {
+      provide: ConfigServiceAbstraction,
+      useExisting: ConfigService,
     },
     {
       provide: ConfigApiServiceAbstraction,
