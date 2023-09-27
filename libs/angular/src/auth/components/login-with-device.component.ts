@@ -480,6 +480,12 @@ export class LoginWithDeviceComponent
       !acctDecryptionOpts.hasMasterPassword &&
       acctDecryptionOpts.trustedDeviceOption?.hasManageResetPasswordPermission
     ) {
+      // Must set this flag so that if the user attempts to leave the set password screen,
+      // the auth guard will redirect them back to the set password screen and
+      // so we can display the proper copy for this scenario.
+      await this.stateService.setForceSetPasswordReason(
+        ForceSetPasswordReason.TdeUserWithoutPasswordHasPasswordResetPermission
+      );
       this.router.navigate([this.setPasswordRoute]);
       return;
     }
