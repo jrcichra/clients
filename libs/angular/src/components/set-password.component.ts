@@ -1,6 +1,7 @@
 import { Directive } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { first } from "rxjs/operators";
+import { of, from } from "rxjs";
+import { filter, first, switchMap, tap } from "rxjs/operators";
 
 import { ApiService } from "@bitwarden/common/abstractions/api.service";
 import { OrganizationUserService } from "@bitwarden/common/abstractions/organization-user/organization-user.service";
@@ -8,6 +9,8 @@ import { OrganizationUserResetPasswordEnrollmentRequest } from "@bitwarden/commo
 import { OrganizationApiServiceAbstraction } from "@bitwarden/common/admin-console/abstractions/organization/organization-api.service.abstraction";
 import { PolicyApiServiceAbstraction } from "@bitwarden/common/admin-console/abstractions/policy/policy-api.service.abstraction";
 import { PolicyService } from "@bitwarden/common/admin-console/abstractions/policy/policy.service.abstraction";
+import { OrganizationAutoEnrollStatusResponse } from "@bitwarden/common/admin-console/models/response/organization-auto-enroll-status.response";
+import { ForceSetPasswordReason } from "@bitwarden/common/auth/models/domain/force-set-password-reason";
 import { SetPasswordRequest } from "@bitwarden/common/auth/models/request/set-password.request";
 import { HashPurpose, DEFAULT_KDF_TYPE, DEFAULT_KDF_CONFIG } from "@bitwarden/common/enums";
 import { KeysRequest } from "@bitwarden/common/models/request/keys.request";
@@ -35,6 +38,9 @@ export class SetPasswordComponent extends BaseChangePasswordComponent {
   resetPasswordAutoEnroll = false;
   onSuccessfulChangePassword: () => Promise<void>;
   successRoute = "vault";
+
+  forceSetPasswordReason: ForceSetPasswordReason = ForceSetPasswordReason.None;
+  ForceSetPasswordReason = ForceSetPasswordReason;
 
   constructor(
     i18nService: I18nService,
@@ -66,40 +72,51 @@ export class SetPasswordComponent extends BaseChangePasswordComponent {
   }
 
   async ngOnInit() {
+    super.ngOnInit();
+
     await this.syncService.fullSync(true);
     this.syncLoading = false;
 
-    // eslint-disable-next-line rxjs/no-async-subscribe
-    this.route.queryParams.pipe(first()).subscribe(async (qParams) => {
-      if (qParams.identifier != null) {
-        this.orgSsoIdentifier = qParams.identifier;
-      } else {
-        // Try to get orgSsoId from state as fallback
-        // Note: this is primarily for the TDE user w/out MP obtains admin MP reset permission scenario.
-        const orgSsoId = await this.stateService.getUserSsoOrganizationIdentifier();
-        if (orgSsoId) {
-          this.orgSsoIdentifier = orgSsoId;
-        }
-      }
-    });
+    this.forceSetPasswordReason = await this.stateService.getForceSetPasswordReason();
 
-    // Automatic Enrollment Detection
-    if (this.orgSsoIdentifier != null) {
-      try {
-        const response = await this.organizationApiService.getAutoEnrollStatus(
-          this.orgSsoIdentifier
-        );
-        this.orgId = response.id;
-        this.resetPasswordAutoEnroll = response.resetPasswordEnabled;
+    this.route.queryParams
+      .pipe(
+        first(),
+        switchMap((qParams) => {
+          if (qParams.identifier != null) {
+            return of(qParams.identifier);
+          } else {
+            // Try to get orgSsoId from state as fallback
+            // Note: this is primarily for the TDE user w/out MP obtains admin MP reset permission scenario.
+            return from(this.stateService.getUserSsoOrganizationIdentifier());
+          }
+        }),
+        tap((orgSsoId: string) => {
+          if (orgSsoId) {
+            this.orgSsoIdentifier = orgSsoId;
+          }
+        }),
+        filter((orgSsoId) => orgSsoId != null),
+        switchMap((orgSsoId: string) =>
+          from(this.organizationApiService.getAutoEnrollStatus(orgSsoId))
+        )
+      )
+      .subscribe({
+        next: async (orgAutoEnrollStatusResponse: OrganizationAutoEnrollStatusResponse) => {
+          try {
+            this.orgId = orgAutoEnrollStatusResponse.id;
+            this.resetPasswordAutoEnroll = orgAutoEnrollStatusResponse.resetPasswordEnabled;
 
-        this.enforcedPolicyOptions =
-          await this.policyApiService.getMasterPasswordPolicyOptsForOrgUser(this.orgId);
-      } catch {
-        this.platformUtilsService.showToast("error", null, this.i18nService.t("errorOccurred"));
-      }
-    }
-
-    super.ngOnInit();
+            this.enforcedPolicyOptions =
+              await this.policyApiService.getMasterPasswordPolicyOptsForOrgUser(this.orgId);
+          } catch (error) {
+            this.platformUtilsService.showToast("error", null, this.i18nService.t("errorOccurred"));
+          }
+        },
+        error: () => {
+          this.platformUtilsService.showToast("error", null, this.i18nService.t("errorOccurred"));
+        },
+      });
   }
 
   async setupSubmitActions() {
