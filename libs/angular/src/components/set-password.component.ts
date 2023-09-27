@@ -179,6 +179,9 @@ export class SetPasswordComponent extends BaseChangePasswordComponent {
 
       await this.formPromise;
 
+      // Clear force set password reason to allow navigation back to vault.
+      await this.stateService.setForceSetPasswordReason(ForceSetPasswordReason.None);
+
       if (this.onSuccessfulChangePassword != null) {
         this.onSuccessfulChangePassword();
       } else {
