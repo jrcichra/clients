@@ -20,10 +20,10 @@ import { TwoFactorService } from "../abstractions/two-factor.service";
 import { PasswordlessLogInCredentials } from "../models/domain/log-in-credentials";
 import { IdentityTokenResponse } from "../models/response/identity-token.response";
 
+import { LoginWithDeviceLoginStrategy } from "./login-with-device-login.strategy";
 import { identityTokenResponseFactory } from "./login.strategy.spec";
-import { PasswordlessLogInStrategy } from "./passwordless-login.strategy";
 
-describe("PasswordlessLogInStrategy", () => {
+describe("LoginWithDeviceLoginStrategy", () => {
   let cryptoService: MockProxy<CryptoService>;
   let apiService: MockProxy<ApiService>;
   let tokenService: MockProxy<TokenService>;
@@ -35,7 +35,7 @@ describe("PasswordlessLogInStrategy", () => {
   let twoFactorService: MockProxy<TwoFactorService>;
   let deviceTrustCryptoService: MockProxy<DeviceTrustCryptoServiceAbstraction>;
 
-  let passwordlessLoginStrategy: PasswordlessLogInStrategy;
+  let loginWithDeviceLoginStrategy: LoginWithDeviceLoginStrategy;
   let credentials: PasswordlessLogInCredentials;
   let tokenResponse: IdentityTokenResponse;
 
@@ -66,7 +66,7 @@ describe("PasswordlessLogInStrategy", () => {
     appIdService.getAppId.mockResolvedValue(deviceId);
     tokenService.decodeToken.mockResolvedValue({});
 
-    passwordlessLoginStrategy = new PasswordlessLogInStrategy(
+    loginWithDeviceLoginStrategy = new LoginWithDeviceLoginStrategy(
       cryptoService,
       apiService,
       tokenService,
@@ -99,7 +99,7 @@ describe("PasswordlessLogInStrategy", () => {
     cryptoService.getMasterKey.mockResolvedValue(masterKey);
     cryptoService.decryptUserKeyWithMasterKey.mockResolvedValue(userKey);
 
-    await passwordlessLoginStrategy.logIn(credentials);
+    await loginWithDeviceLoginStrategy.logIn(credentials);
 
     expect(cryptoService.setMasterKey).toHaveBeenCalledWith(masterKey);
     expect(cryptoService.setMasterKeyHash).toHaveBeenCalledWith(decMasterKeyHash);
@@ -121,7 +121,7 @@ describe("PasswordlessLogInStrategy", () => {
     );
 
     // Call logIn
-    await passwordlessLoginStrategy.logIn(credentials);
+    await loginWithDeviceLoginStrategy.logIn(credentials);
 
     // setMasterKey and setMasterKeyHash should not be called
     expect(cryptoService.setMasterKey).not.toHaveBeenCalled();

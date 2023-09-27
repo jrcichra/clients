@@ -429,7 +429,7 @@ export class LoginWithDeviceComponent
     // Note: credentials change based on if the authReqResponse.key is a encryptedMasterKey or UserKey
     const credentials = await this.buildPasswordlessLoginCredentials(requestId, authReqResponse);
 
-    // Note: keys are set by PasswordlessLogInStrategy success handling
+    // Note: keys are set by LoginWithDeviceLoginStrategy success handling
     return await this.authService.logIn(credentials);
   }
 
