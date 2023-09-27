@@ -73,7 +73,7 @@ const routes: Routes = [
       {
         path: "admin-approval-requested",
         component: LoginViaAuthRequestComponent,
-        data: { titleId: "loginWithDevice" },
+        data: { titleId: "adminApprovalRequested" },
       },
       { path: "2fa", component: TwoFactorComponent, canActivate: [UnauthGuard] },
       {
