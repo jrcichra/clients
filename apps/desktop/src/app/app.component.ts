@@ -366,7 +366,7 @@ export class AppComponent implements OnInit, OnDestroy {
               (await this.authService.getAuthStatus(message.userId)) ===
               AuthenticationStatus.Locked;
             const forcedPasswordReset =
-              (await this.stateService.getForcePasswordResetReason({ userId: message.userId })) !=
+              (await this.stateService.getForceSetPasswordReason({ userId: message.userId })) !=
               ForceSetPasswordReason.None;
             if (locked) {
               this.messagingService.send("locked", { userId: message.userId });
