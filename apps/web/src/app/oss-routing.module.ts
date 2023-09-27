@@ -23,7 +23,7 @@ import { AcceptOrganizationComponent } from "./auth/accept-organization.componen
 import { HintComponent } from "./auth/hint.component";
 import { LockComponent } from "./auth/lock.component";
 import { LoginDecryptionOptionsComponent } from "./auth/login/login-decryption-options/login-decryption-options.component";
-import { LoginWithDeviceComponent } from "./auth/login/login-with-device.component";
+import { LoginViaAuthRequestComponent } from "./auth/login/login-via-auth-request.component";
 import { LoginComponent } from "./auth/login/login.component";
 import { RecoverDeleteComponent } from "./auth/recover-delete.component";
 import { RecoverTwoFactorComponent } from "./auth/recover-two-factor.component";
@@ -67,12 +67,12 @@ const routes: Routes = [
       { path: "login", component: LoginComponent, canActivate: [UnauthGuard] },
       {
         path: "login-with-device",
-        component: LoginWithDeviceComponent,
+        component: LoginViaAuthRequestComponent,
         data: { titleId: "loginWithDevice" },
       },
       {
         path: "admin-approval-requested",
-        component: LoginWithDeviceComponent,
+        component: LoginViaAuthRequestComponent,
         data: { titleId: "loginWithDevice" },
       },
       { path: "2fa", component: TwoFactorComponent, canActivate: [UnauthGuard] },

@@ -32,15 +32,13 @@ import { PasswordGenerationServiceAbstraction } from "@bitwarden/common/tools/ge
 
 import { CaptchaProtectedComponent } from "./captcha-protected.component";
 
-// TODO: consider renaming this component something like LoginViaAuthReqComponent
-
 enum State {
   StandardAuthRequest,
   AdminAuthRequest,
 }
 
 @Directive()
-export class LoginWithDeviceComponent
+export class LoginViaAuthRequestComponent
   extends CaptchaProtectedComponent
   implements OnInit, OnDestroy
 {
