@@ -2,6 +2,7 @@ import { ipcRenderer } from "electron";
 
 import { DeviceType } from "@bitwarden/common/enums/device-type.enum";
 
+import { BiometricMessage } from "../types/biometric-message";
 import { isDev, isWindowsStore } from "../utils";
 
 export default {
@@ -12,6 +13,9 @@ export default {
   isDev: isDev(),
   isWindowsStore: isWindowsStore(),
   reloadProcess: () => ipcRenderer.send("reload-process"),
+
+  isWindowVisible: (): Promise<boolean> => ipcRenderer.invoke("windowVisible"),
+  biometric: (message: BiometricMessage) => ipcRenderer.invoke("biometric", message),
 };
 
 function deviceType(): DeviceType {

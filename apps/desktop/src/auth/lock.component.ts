@@ -1,6 +1,5 @@
 import { Component, NgZone } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { ipcRenderer } from "electron";
 
 import { LockComponent as BaseLockComponent } from "@bitwarden/angular/auth/components/lock.component";
 import { ApiService } from "@bitwarden/common/abstractions/api.service";
@@ -92,7 +91,7 @@ export class LockComponent extends BaseLockComponent {
           return;
         }
 
-        if (await ipcRenderer.invoke("windowVisible")) {
+        if (await ipc.platform.isWindowVisible()) {
           this.unlockBiometric();
         }
       }, 1000);
@@ -132,7 +131,7 @@ export class LockComponent extends BaseLockComponent {
 
   private async canUseBiometric() {
     const userId = await this.stateService.getUserId();
-    const val = await ipcRenderer.invoke("biometric", {
+    const val = await ipc.platform.biometric({
       action: BiometricStorageAction.EnabledForUser,
       key: `${userId}_user_biometric`,
       keySuffix: KeySuffixOptions.Biometric,
