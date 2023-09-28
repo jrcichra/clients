@@ -17,6 +17,8 @@ export default {
   onSystemThemeUpdated: (callback: (theme: ThemeType) => void) => {
     ipcRenderer.on("systemThemeUpdated", (_event, theme: ThemeType) => callback(theme));
   },
+
+  isWindowVisible: (): Promise<boolean> => ipcRenderer.invoke("windowVisible"),
 };
 
 function deviceType(): DeviceType {
