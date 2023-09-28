@@ -1,7 +1,14 @@
 import { ipcRenderer } from "electron";
 
 import { DeviceType, ThemeType } from "@bitwarden/common/enums";
+import { EncString } from "@bitwarden/common/platform/models/domain/enc-string";
 
+import {
+  EncryptedMessageResponse,
+  LegacyMessageWrapper,
+  Message,
+  UnencryptedMessageResponse,
+} from "../models/native-messaging";
 import { isDev, isWindowsStore } from "../utils";
 
 export default {
@@ -16,6 +23,18 @@ export default {
   getSystemTheme: (): Promise<ThemeType> => ipcRenderer.invoke("systemTheme"),
   onSystemThemeUpdated: (callback: (theme: ThemeType) => void) => {
     ipcRenderer.on("systemThemeUpdated", (_event, theme: ThemeType) => callback(theme));
+  },
+
+  sendNativeMessagingReply: (
+    message:
+      | EncryptedMessageResponse
+      | UnencryptedMessageResponse
+      | { appId: string; command?: string; sharedSecret?: string; message?: EncString }
+  ) => {
+    ipcRenderer.send("nativeMessagingReply", message);
+  },
+  onNativeMessaging: (callback: (message: LegacyMessageWrapper | Message) => void) => {
+    ipcRenderer.on("nativeMessaging", (_event, message: any) => callback(message));
   },
 };
 
