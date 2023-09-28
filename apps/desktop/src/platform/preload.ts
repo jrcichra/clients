@@ -12,6 +12,19 @@ export default {
   isDev: isDev(),
   isWindowsStore: isWindowsStore(),
   reloadProcess: () => ipcRenderer.send("reload-process"),
+
+  storageService: <T>(
+    action: "get" | "has" | "save" | "remove",
+    key: string,
+    obj?: any
+  ): Promise<T> => ipcRenderer.invoke("storageService", { action, key, obj }),
+
+  keytar: (
+    action: "getPassword" | "hasPassword" | "setPassword" | "deletePassword",
+    key: string,
+    keySuffix: string,
+    value?: string
+  ): Promise<string> => ipcRenderer.invoke("keytar", { action, key, keySuffix, value }),
 };
 
 function deviceType(): DeviceType {
