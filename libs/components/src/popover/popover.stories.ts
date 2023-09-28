@@ -60,7 +60,7 @@ export default {
 type Story = StoryObj<PopoverTriggerForDirective>;
 
 const popoverContent = `
-  <bit-popover [header]="'Example Header'" #myPopover>
+  <bit-popover [title]="'Example Title'" #myPopover>
     <div>Lorem ipsum dolor <a href="#">adipisicing elit</a>.</div>
     <ul class="tw-mt-2 tw-mb-0 tw-pl-4">
       <li>Dolor sit amet consectetur</li>
@@ -94,7 +94,7 @@ export const Open: Story = {
   render: (args) => ({
     props: args,
     template: `
-      <bit-popover [header]="'Example Header'" #myPopover="popoverComponent">
+      <bit-popover [title]="'Example Title'" #myPopover="popoverComponent">
         <div>Lorem ipsum dolor <a href="#">adipisicing elit</a>.</div>
         <ul class="tw-mt-2 tw-mb-0 tw-pl-4">
           <li>Dolor sit amet consectetur</li>

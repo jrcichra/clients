@@ -13,6 +13,6 @@ import { SharedModule } from "../shared/shared.module";
 })
 export class PopoverComponent {
   @ViewChild(TemplateRef) templateRef: TemplateRef<any>;
-  @Input() header = "";
+  @Input() title = "";
   @Output() closed = new EventEmitter();
 }
