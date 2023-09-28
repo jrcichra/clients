@@ -9,7 +9,7 @@ import {
   OnDestroy,
   ViewContainerRef,
 } from "@angular/core";
-import { Observable, Subscription, mergeWith } from "rxjs";
+import { Observable, Subscription, filter, mergeWith } from "rxjs";
 
 import { defaultPositions } from "./default-positions";
 import { PopoverComponent } from "./popover.component";
@@ -86,10 +86,13 @@ export class PopoverTriggerForDirective implements OnDestroy {
 
   private getClosedEvents(): Observable<any> {
     const detachments = this.overlayRef.detachments();
+    const escKey = this.overlayRef
+      .keydownEvents()
+      .pipe(filter((event: KeyboardEvent) => event.key === "Escape"));
     const backdrop = this.overlayRef.backdropClick();
     const popoverClosed = this.popover.closed;
 
-    return detachments.pipe(mergeWith(backdrop, popoverClosed));
+    return detachments.pipe(mergeWith(escKey, backdrop, popoverClosed));
   }
 
   private destroyPopover() {
