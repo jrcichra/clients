@@ -348,7 +348,6 @@ export class SyncService implements SyncServiceAbstraction {
     if (
       acctDecryptionOpts.trustedDeviceOption !== undefined &&
       !acctDecryptionOpts.hasMasterPassword &&
-      !acctDecryptionOpts.trustedDeviceOption.hasManageResetPasswordPermission &&
       response.hasManageResetPasswordPermission
     ) {
       // TDE user w/out MP went from having no password reset permission to having it.
