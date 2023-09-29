@@ -1,19 +1,19 @@
-import * as fs from "fs";
+import { promises as fs } from "fs";
 import * as path from "path";
+
+import { ipcMain } from "electron";
 
 import { I18nService as BaseI18nService } from "@bitwarden/common/platform/services/i18n.service";
 
-export class I18nService extends BaseI18nService {
+export class I18nMainService extends BaseI18nService {
   constructor(systemLanguage: string, localesDirectory: string) {
-    super(systemLanguage, localesDirectory, (formattedLocale: string) => {
-      const filePath = path.join(
-        __dirname,
-        this.localesDirectory + "/" + formattedLocale + "/messages.json"
-      );
-      const localesJson = fs.readFileSync(filePath, "utf8");
-      const locales = JSON.parse(localesJson.replace(/^\uFEFF/, "")); // strip the BOM
-      return Promise.resolve(locales);
-    });
+    super(systemLanguage, localesDirectory, (formattedLocale: string) =>
+      this.readLanguageFile(formattedLocale)
+    );
+
+    ipcMain.handle("getLanguageFile", async (event, formattedLocale: string) =>
+      this.readLanguageFile(formattedLocale)
+    );
 
     // Please leave 'en' where it is, as it's our fallback language in case no translation can be found
     this.supportedTranslationLocales = [
@@ -74,5 +74,15 @@ export class I18nService extends BaseI18nService {
       "zh-CN",
       "zh-TW",
     ];
+  }
+
+  private async readLanguageFile(formattedLocale: string): Promise<any> {
+    const filePath = path.join(
+      __dirname,
+      this.localesDirectory + "/" + formattedLocale + "/messages.json"
+    );
+    const localesJson = await fs.readFile(filePath, "utf8");
+    const locales = JSON.parse(localesJson.replace(/^\uFEFF/, "")); // strip the BOM
+    return Promise.resolve(locales);
   }
 }

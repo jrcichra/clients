@@ -47,7 +47,7 @@ import { ElectronRendererSecureStorageService } from "../../platform/services/el
 import { ElectronRendererStorageService } from "../../platform/services/electron-renderer-storage.service";
 import { ElectronStateService } from "../../platform/services/electron-state.service";
 import { ElectronStateService as ElectronStateServiceAbstraction } from "../../platform/services/electron-state.service.abstraction";
-import { I18nService } from "../../platform/services/i18n.service";
+import { I18nRendererService as I18nService } from "../../platform/services/i18n.renderer.service";
 import { EncryptedMessageHandlerService } from "../../services/encrypted-message-handler.service";
 import { NativeMessageHandlerService } from "../../services/native-message-handler.service";
 import { NativeMessagingService } from "../../services/native-messaging.service";

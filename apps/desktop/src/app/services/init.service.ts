@@ -17,7 +17,7 @@ import { EventUploadService } from "@bitwarden/common/services/event/event-uploa
 import { VaultTimeoutService } from "@bitwarden/common/services/vault-timeout/vault-timeout.service";
 import { SyncService as SyncServiceAbstraction } from "@bitwarden/common/vault/abstractions/sync/sync.service.abstraction";
 
-import { I18nService } from "../../platform/services/i18n.service";
+import { I18nRendererService as I18nService } from "../../platform/services/i18n.renderer.service";
 import { NativeMessagingService } from "../../services/native-messaging.service";
 
 @Injectable()

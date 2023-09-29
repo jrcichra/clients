@@ -12,6 +12,9 @@ export default {
   isDev: isDev(),
   isWindowsStore: isWindowsStore(),
   reloadProcess: () => ipcRenderer.send("reload-process"),
+
+  getLanguageFile: (formattedLocale: string): Promise<object> =>
+    ipcRenderer.invoke("getLanguageFile", formattedLocale),
 };
 
 function deviceType(): DeviceType {
