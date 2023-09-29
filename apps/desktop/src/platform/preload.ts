@@ -4,6 +4,16 @@ import { DeviceType, ThemeType } from "@bitwarden/common/enums";
 
 import { isDev, isWindowsStore } from "../utils";
 
+const storage = {
+  get: <T>(key: string): Promise<T> => ipcRenderer.invoke("storageService", { action: "get", key }),
+  has: (key: string): Promise<boolean> =>
+    ipcRenderer.invoke("storageService", { action: "has", key }),
+  save: (key: string, obj: any): Promise<void> =>
+    ipcRenderer.invoke("storageService", { action: "save", key, obj }),
+  remove: (key: string): Promise<void> =>
+    ipcRenderer.invoke("storageService", { action: "remove", key }),
+};
+
 export default {
   versions: {
     app: (): Promise<string> => ipcRenderer.invoke("appVersion"),
@@ -17,6 +27,8 @@ export default {
   onSystemThemeUpdated: (callback: (theme: ThemeType) => void) => {
     ipcRenderer.on("systemThemeUpdated", (_event, theme: ThemeType) => callback(theme));
   },
+
+  storage,
 };
 
 function deviceType(): DeviceType {
