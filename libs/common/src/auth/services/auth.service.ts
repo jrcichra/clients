@@ -28,7 +28,7 @@ import { AuthenticationStatus } from "../enums/authentication-status";
 import { AuthenticationType } from "../enums/authentication-type";
 import { AuthRequestLoginStrategy } from "../login-strategies/auth-request-login.strategy";
 import { PasswordLoginStrategy } from "../login-strategies/password-login.strategy";
-import { SsoLogInStrategy } from "../login-strategies/sso-login.strategy";
+import { SsoLoginStrategy } from "../login-strategies/sso-login.strategy";
 import { UserApiLogInStrategy } from "../login-strategies/user-api-login.strategy";
 import { AuthResult } from "../models/domain/auth-result";
 import { KdfConfig } from "../models/domain/kdf-config";
@@ -49,7 +49,7 @@ export class AuthService implements AuthServiceAbstraction {
     if (
       this.logInStrategy instanceof PasswordLoginStrategy ||
       this.logInStrategy instanceof AuthRequestLoginStrategy ||
-      this.logInStrategy instanceof SsoLogInStrategy
+      this.logInStrategy instanceof SsoLoginStrategy
     ) {
       return this.logInStrategy.email;
     }
@@ -76,7 +76,7 @@ export class AuthService implements AuthServiceAbstraction {
   }
 
   get ssoEmail2FaSessionToken(): string {
-    return this.logInStrategy instanceof SsoLogInStrategy
+    return this.logInStrategy instanceof SsoLoginStrategy
       ? this.logInStrategy.ssoEmail2FaSessionToken
       : null;
   }
@@ -84,7 +84,7 @@ export class AuthService implements AuthServiceAbstraction {
   private logInStrategy:
     | UserApiLogInStrategy
     | PasswordLoginStrategy
-    | SsoLogInStrategy
+    | SsoLoginStrategy
     | AuthRequestLoginStrategy;
   private sessionTimeout: any;
 
@@ -122,7 +122,7 @@ export class AuthService implements AuthServiceAbstraction {
     let strategy:
       | UserApiLogInStrategy
       | PasswordLoginStrategy
-      | SsoLogInStrategy
+      | SsoLoginStrategy
       | AuthRequestLoginStrategy;
 
     switch (credentials.type) {
@@ -143,7 +143,7 @@ export class AuthService implements AuthServiceAbstraction {
         );
         break;
       case AuthenticationType.Sso:
-        strategy = new SsoLogInStrategy(
+        strategy = new SsoLoginStrategy(
           this.cryptoService,
           this.apiService,
           this.tokenService,
@@ -233,7 +233,7 @@ export class AuthService implements AuthServiceAbstraction {
   }
 
   authingWithSso(): boolean {
-    return this.logInStrategy instanceof SsoLogInStrategy;
+    return this.logInStrategy instanceof SsoLoginStrategy;
   }
 
   authingWithPassword(): boolean {
@@ -351,7 +351,7 @@ export class AuthService implements AuthServiceAbstraction {
     strategy:
       | UserApiLogInStrategy
       | PasswordLoginStrategy
-      | SsoLogInStrategy
+      | SsoLoginStrategy
       | AuthRequestLoginStrategy
   ) {
     this.logInStrategy = strategy;

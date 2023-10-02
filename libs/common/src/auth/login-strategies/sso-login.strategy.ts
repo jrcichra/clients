@@ -21,7 +21,7 @@ import { IdentityTokenResponse } from "../models/response/identity-token.respons
 
 import { LoginStrategy } from "./login.strategy";
 
-export class SsoLogInStrategy extends LoginStrategy {
+export class SsoLoginStrategy extends LoginStrategy {
   tokenRequest: SsoTokenRequest;
   orgId: string;
 

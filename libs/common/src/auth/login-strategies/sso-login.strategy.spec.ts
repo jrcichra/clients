@@ -26,12 +26,12 @@ import { IdentityTokenResponse } from "../models/response/identity-token.respons
 import { IUserDecryptionOptionsServerResponse } from "../models/response/user-decryption-options/user-decryption-options.response";
 
 import { identityTokenResponseFactory } from "./login.strategy.spec";
-import { SsoLogInStrategy } from "./sso-login.strategy";
+import { SsoLoginStrategy } from "./sso-login.strategy";
 
 // TODO: Add tests for new trySetUserKeyWithApprovedAdminRequestIfExists logic
 // https://bitwarden.atlassian.net/browse/PM-3339
 
-describe("SsoLogInStrategy", () => {
+describe("SsoLoginStrategy", () => {
   let cryptoService: MockProxy<CryptoService>;
   let apiService: MockProxy<ApiService>;
   let tokenService: MockProxy<TokenService>;
@@ -46,7 +46,7 @@ describe("SsoLogInStrategy", () => {
   let authRequestCryptoService: MockProxy<AuthRequestCryptoServiceAbstraction>;
   let i18nService: MockProxy<I18nService>;
 
-  let ssoLogInStrategy: SsoLogInStrategy;
+  let ssoLoginStrategy: SsoLoginStrategy;
   let credentials: SsoLogInCredentials;
 
   const deviceId = Utils.newGuid();
@@ -76,7 +76,7 @@ describe("SsoLogInStrategy", () => {
     appIdService.getAppId.mockResolvedValue(deviceId);
     tokenService.decodeToken.mockResolvedValue({});
 
-    ssoLogInStrategy = new SsoLogInStrategy(
+    ssoLoginStrategy = new SsoLoginStrategy(
       cryptoService,
       apiService,
       tokenService,
@@ -97,7 +97,7 @@ describe("SsoLogInStrategy", () => {
   it("sends SSO information to server", async () => {
     apiService.postIdentityToken.mockResolvedValue(identityTokenResponseFactory());
 
-    await ssoLogInStrategy.logIn(credentials);
+    await ssoLoginStrategy.logIn(credentials);
 
     expect(apiService.postIdentityToken).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -120,7 +120,7 @@ describe("SsoLogInStrategy", () => {
     tokenResponse.key = null;
     apiService.postIdentityToken.mockResolvedValue(tokenResponse);
 
-    await ssoLogInStrategy.logIn(credentials);
+    await ssoLoginStrategy.logIn(credentials);
 
     expect(cryptoService.setMasterKey).not.toHaveBeenCalled();
     expect(cryptoService.setUserKey).not.toHaveBeenCalled();
@@ -133,7 +133,7 @@ describe("SsoLogInStrategy", () => {
     apiService.postIdentityToken.mockResolvedValue(tokenResponse);
 
     // Act
-    await ssoLogInStrategy.logIn(credentials);
+    await ssoLoginStrategy.logIn(credentials);
 
     // Assert
     expect(cryptoService.setMasterKeyEncryptedUserKey).toHaveBeenCalledTimes(1);
@@ -195,7 +195,7 @@ describe("SsoLogInStrategy", () => {
       const cryptoSvcSetUserKeySpy = jest.spyOn(cryptoService, "setUserKey");
 
       // Act
-      await ssoLogInStrategy.logIn(credentials);
+      await ssoLoginStrategy.logIn(credentials);
 
       // Assert
       expect(deviceTrustCryptoService.getDeviceKey).toHaveBeenCalledTimes(1);
@@ -216,7 +216,7 @@ describe("SsoLogInStrategy", () => {
       deviceTrustCryptoService.decryptUserKeyWithDeviceKey.mockResolvedValue(mockUserKey);
 
       // Act
-      await ssoLogInStrategy.logIn(credentials);
+      await ssoLoginStrategy.logIn(credentials);
 
       // Assert
       expect(cryptoService.setUserKey).not.toHaveBeenCalled();
@@ -237,7 +237,7 @@ describe("SsoLogInStrategy", () => {
         deviceTrustCryptoService.getDeviceKey.mockResolvedValue(mockDeviceKey);
 
         // Act
-        await ssoLogInStrategy.logIn(credentials);
+        await ssoLoginStrategy.logIn(credentials);
 
         // Assert
         expect(cryptoService.setUserKey).not.toHaveBeenCalled();
@@ -256,7 +256,7 @@ describe("SsoLogInStrategy", () => {
       deviceTrustCryptoService.decryptUserKeyWithDeviceKey.mockResolvedValue(null);
 
       // Act
-      await ssoLogInStrategy.logIn(credentials);
+      await ssoLoginStrategy.logIn(credentials);
 
       // Assert
       expect(cryptoService.setUserKey).not.toHaveBeenCalled();
@@ -281,7 +281,7 @@ describe("SsoLogInStrategy", () => {
       apiService.postIdentityToken.mockResolvedValue(tokenResponse);
       cryptoService.getMasterKey.mockResolvedValue(masterKey);
 
-      await ssoLogInStrategy.logIn(credentials);
+      await ssoLoginStrategy.logIn(credentials);
 
       expect(keyConnectorService.setMasterKeyFromUrl).toHaveBeenCalledWith(keyConnectorUrl);
     });
@@ -291,7 +291,7 @@ describe("SsoLogInStrategy", () => {
 
       apiService.postIdentityToken.mockResolvedValue(tokenResponse);
 
-      await ssoLogInStrategy.logIn(credentials);
+      await ssoLoginStrategy.logIn(credentials);
 
       expect(keyConnectorService.convertNewSsoUserToKeyConnector).toHaveBeenCalledWith(
         tokenResponse,
@@ -309,7 +309,7 @@ describe("SsoLogInStrategy", () => {
       cryptoService.getMasterKey.mockResolvedValue(masterKey);
       cryptoService.decryptUserKeyWithMasterKey.mockResolvedValue(userKey);
 
-      await ssoLogInStrategy.logIn(credentials);
+      await ssoLoginStrategy.logIn(credentials);
 
       expect(cryptoService.decryptUserKeyWithMasterKey).toHaveBeenCalledWith(masterKey);
       expect(cryptoService.setUserKey).toHaveBeenCalledWith(userKey);
@@ -332,7 +332,7 @@ describe("SsoLogInStrategy", () => {
       apiService.postIdentityToken.mockResolvedValue(tokenResponse);
       cryptoService.getMasterKey.mockResolvedValue(masterKey);
 
-      await ssoLogInStrategy.logIn(credentials);
+      await ssoLoginStrategy.logIn(credentials);
 
       expect(keyConnectorService.setMasterKeyFromUrl).toHaveBeenCalledWith(keyConnectorUrl);
     });
@@ -342,7 +342,7 @@ describe("SsoLogInStrategy", () => {
 
       apiService.postIdentityToken.mockResolvedValue(tokenResponse);
 
-      await ssoLogInStrategy.logIn(credentials);
+      await ssoLoginStrategy.logIn(credentials);
 
       expect(keyConnectorService.convertNewSsoUserToKeyConnector).toHaveBeenCalledWith(
         tokenResponse,
@@ -360,7 +360,7 @@ describe("SsoLogInStrategy", () => {
       cryptoService.getMasterKey.mockResolvedValue(masterKey);
       cryptoService.decryptUserKeyWithMasterKey.mockResolvedValue(userKey);
 
-      await ssoLogInStrategy.logIn(credentials);
+      await ssoLoginStrategy.logIn(credentials);
 
       expect(cryptoService.decryptUserKeyWithMasterKey).toHaveBeenCalledWith(masterKey);
       expect(cryptoService.setUserKey).toHaveBeenCalledWith(userKey);
