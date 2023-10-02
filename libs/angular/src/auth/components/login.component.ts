@@ -181,7 +181,7 @@ export class LoginComponent extends CaptchaProtectedComponent implements OnInit 
     }
   }
 
-  async startPasswordlessLogin() {
+  async startAuthRequestLogin() {
     this.formGroup.get("masterPassword")?.clearValidators();
     this.formGroup.get("masterPassword")?.updateValueAndValidity();
 
