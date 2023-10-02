@@ -96,7 +96,7 @@ export function identityTokenResponseFactory(
 }
 
 // TODO: add tests for latest changes to base class for TDE
-describe("LogInStrategy", () => {
+describe("LoginStrategy", () => {
   let cryptoService: MockProxy<CryptoService>;
   let apiService: MockProxy<ApiService>;
   let tokenService: MockProxy<TokenService>;

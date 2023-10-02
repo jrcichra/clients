@@ -19,9 +19,9 @@ import { SsoLogInCredentials } from "../models/domain/log-in-credentials";
 import { SsoTokenRequest } from "../models/request/identity-token/sso-token.request";
 import { IdentityTokenResponse } from "../models/response/identity-token.response";
 
-import { LogInStrategy } from "./login.strategy";
+import { LoginStrategy } from "./login.strategy";
 
-export class SsoLogInStrategy extends LogInStrategy {
+export class SsoLogInStrategy extends LoginStrategy {
   tokenRequest: SsoTokenRequest;
   orgId: string;
 

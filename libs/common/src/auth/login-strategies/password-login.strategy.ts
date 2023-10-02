@@ -22,9 +22,9 @@ import { IdentityCaptchaResponse } from "../models/response/identity-captcha.res
 import { IdentityTokenResponse } from "../models/response/identity-token.response";
 import { IdentityTwoFactorResponse } from "../models/response/identity-two-factor.response";
 
-import { LogInStrategy } from "./login.strategy";
+import { LoginStrategy } from "./login.strategy";
 
-export class PasswordLogInStrategy extends LogInStrategy {
+export class PasswordLogInStrategy extends LoginStrategy {
   get email() {
     return this.tokenRequest.email;
   }

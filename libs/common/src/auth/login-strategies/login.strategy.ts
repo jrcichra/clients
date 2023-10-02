@@ -36,7 +36,7 @@ import { IdentityTwoFactorResponse } from "../models/response/identity-two-facto
 
 type IdentityResponse = IdentityTokenResponse | IdentityTwoFactorResponse | IdentityCaptchaResponse;
 
-export abstract class LogInStrategy {
+export abstract class LoginStrategy {
   protected abstract tokenRequest: UserApiTokenRequest | PasswordTokenRequest | SsoTokenRequest;
   protected captchaBypassToken: string = null;
 

@@ -13,9 +13,9 @@ import { UserApiLogInCredentials } from "../models/domain/log-in-credentials";
 import { UserApiTokenRequest } from "../models/request/identity-token/user-api-token.request";
 import { IdentityTokenResponse } from "../models/response/identity-token.response";
 
-import { LogInStrategy } from "./login.strategy";
+import { LoginStrategy } from "./login.strategy";
 
-export class UserApiLogInStrategy extends LogInStrategy {
+export class UserApiLogInStrategy extends LoginStrategy {
   tokenRequest: UserApiTokenRequest;
 
   constructor(

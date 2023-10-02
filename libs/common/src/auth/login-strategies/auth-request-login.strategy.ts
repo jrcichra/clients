@@ -14,9 +14,9 @@ import { PasswordTokenRequest } from "../models/request/identity-token/password-
 import { TokenTwoFactorRequest } from "../models/request/identity-token/token-two-factor.request";
 import { IdentityTokenResponse } from "../models/response/identity-token.response";
 
-import { LogInStrategy } from "./login.strategy";
+import { LoginStrategy } from "./login.strategy";
 
-export class AuthRequestLoginStrategy extends LogInStrategy {
+export class AuthRequestLoginStrategy extends LoginStrategy {
   get email() {
     return this.tokenRequest.email;
   }
