@@ -19,7 +19,7 @@ import {
   PasswordLoginCredentials,
   SsoLoginCredentials,
   UserApiLoginCredentials,
-} from "@bitwarden/common/auth/models/domain/log-in-credentials";
+} from "@bitwarden/common/auth/models/domain/login-credentials";
 import { TokenTwoFactorRequest } from "@bitwarden/common/auth/models/request/identity-token/token-two-factor.request";
 import { PasswordRequest } from "@bitwarden/common/auth/models/request/password.request";
 import { TwoFactorEmailRequest } from "@bitwarden/common/auth/models/request/two-factor-email.request";

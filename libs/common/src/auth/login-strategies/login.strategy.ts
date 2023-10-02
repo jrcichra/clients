@@ -24,7 +24,7 @@ import {
   PasswordLoginCredentials,
   SsoLoginCredentials,
   UserApiLoginCredentials,
-} from "../models/domain/log-in-credentials";
+} from "../models/domain/login-credentials";
 import { DeviceRequest } from "../models/request/identity-token/device.request";
 import { PasswordTokenRequest } from "../models/request/identity-token/password-token.request";
 import { SsoTokenRequest } from "../models/request/identity-token/sso-token.request";

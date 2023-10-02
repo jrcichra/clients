@@ -9,7 +9,7 @@ import {
   PasswordLoginCredentials,
   SsoLoginCredentials,
   AuthRequestLoginCredentials,
-} from "../models/domain/log-in-credentials";
+} from "../models/domain/login-credentials";
 import { TokenTwoFactorRequest } from "../models/request/identity-token/token-two-factor.request";
 import { AuthRequestResponse } from "../models/response/auth-request.response";
 

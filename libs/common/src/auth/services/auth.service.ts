@@ -37,7 +37,7 @@ import {
   PasswordLoginCredentials,
   SsoLoginCredentials,
   UserApiLoginCredentials,
-} from "../models/domain/log-in-credentials";
+} from "../models/domain/login-credentials";
 import { TokenTwoFactorRequest } from "../models/request/identity-token/token-two-factor.request";
 import { PasswordlessAuthRequest } from "../models/request/passwordless-auth.request";
 import { AuthRequestResponse } from "../models/response/auth-request.response";

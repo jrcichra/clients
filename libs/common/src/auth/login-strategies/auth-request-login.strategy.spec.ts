@@ -17,7 +17,7 @@ import { CsprngArray } from "../../types/csprng";
 import { DeviceTrustCryptoServiceAbstraction } from "../abstractions/device-trust-crypto.service.abstraction";
 import { TokenService } from "../abstractions/token.service";
 import { TwoFactorService } from "../abstractions/two-factor.service";
-import { AuthRequestLoginCredentials } from "../models/domain/log-in-credentials";
+import { AuthRequestLoginCredentials } from "../models/domain/login-credentials";
 import { IdentityTokenResponse } from "../models/response/identity-token.response";
 
 import { AuthRequestLoginStrategy } from "./auth-request-login.strategy";
