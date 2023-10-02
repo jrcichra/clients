@@ -68,7 +68,7 @@ export class AuthRequestLoginStrategy extends LogInStrategy {
       await this.buildDeviceRequest()
     );
 
-    this.tokenRequest.setPasswordlessAccessCode(credentials.authRequestId);
+    this.tokenRequest.setAuthRequestAccessCode(credentials.authRequestId);
     const [authResult] = await this.startLogIn();
     return authResult;
   }
