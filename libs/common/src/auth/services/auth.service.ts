@@ -174,7 +174,7 @@ export class AuthService implements AuthServiceAbstraction {
           this.keyConnectorService
         );
         break;
-      case AuthenticationType.Passwordless:
+      case AuthenticationType.AuthRequest:
         strategy = new AuthRequestLoginStrategy(
           this.cryptoService,
           this.apiService,

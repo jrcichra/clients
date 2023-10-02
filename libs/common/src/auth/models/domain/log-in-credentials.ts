@@ -32,7 +32,7 @@ export class UserApiLogInCredentials {
 }
 
 export class AuthRequestLoginCredentials {
-  readonly type = AuthenticationType.Passwordless;
+  readonly type = AuthenticationType.AuthRequest;
 
   constructor(
     public email: string,
