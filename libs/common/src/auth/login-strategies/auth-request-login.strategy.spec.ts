@@ -17,7 +17,7 @@ import { CsprngArray } from "../../types/csprng";
 import { DeviceTrustCryptoServiceAbstraction } from "../abstractions/device-trust-crypto.service.abstraction";
 import { TokenService } from "../abstractions/token.service";
 import { TwoFactorService } from "../abstractions/two-factor.service";
-import { PasswordlessLogInCredentials } from "../models/domain/log-in-credentials";
+import { AuthRequestLoginCredentials } from "../models/domain/log-in-credentials";
 import { IdentityTokenResponse } from "../models/response/identity-token.response";
 
 import { AuthRequestLoginStrategy } from "./auth-request-login.strategy";
@@ -36,7 +36,7 @@ describe("AuthRequestLoginStrategy", () => {
   let deviceTrustCryptoService: MockProxy<DeviceTrustCryptoServiceAbstraction>;
 
   let authRequestLoginStrategy: AuthRequestLoginStrategy;
-  let credentials: PasswordlessLogInCredentials;
+  let credentials: AuthRequestLoginCredentials;
   let tokenResponse: IdentityTokenResponse;
 
   const deviceId = Utils.newGuid();
@@ -84,7 +84,7 @@ describe("AuthRequestLoginStrategy", () => {
   });
 
   it("sets keys after a successful authentication when masterKey and masterKeyHash provided in login credentials", async () => {
-    credentials = new PasswordlessLogInCredentials(
+    credentials = new AuthRequestLoginCredentials(
       email,
       accessCode,
       authRequestId,
@@ -111,7 +111,7 @@ describe("AuthRequestLoginStrategy", () => {
 
   it("sets keys after a successful authentication when only userKey provided in login credentials", async () => {
     // Initialize credentials with only userKey
-    credentials = new PasswordlessLogInCredentials(
+    credentials = new AuthRequestLoginCredentials(
       email,
       accessCode,
       authRequestId,

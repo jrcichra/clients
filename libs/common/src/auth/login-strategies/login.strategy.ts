@@ -20,7 +20,7 @@ import { TwoFactorProviderType } from "../enums/two-factor-provider-type";
 import { AuthResult } from "../models/domain/auth-result";
 import { ForceResetPasswordReason } from "../models/domain/force-reset-password-reason";
 import {
-  PasswordlessLogInCredentials,
+  AuthRequestLoginCredentials,
   PasswordLogInCredentials,
   SsoLogInCredentials,
   UserApiLogInCredentials,
@@ -57,7 +57,7 @@ export abstract class LogInStrategy {
       | UserApiLogInCredentials
       | PasswordLogInCredentials
       | SsoLogInCredentials
-      | PasswordlessLogInCredentials
+      | AuthRequestLoginCredentials
   ): Promise<AuthResult>;
 
   async logInTwoFactor(

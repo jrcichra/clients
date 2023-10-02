@@ -33,7 +33,7 @@ import { UserApiLogInStrategy } from "../login-strategies/user-api-login.strateg
 import { AuthResult } from "../models/domain/auth-result";
 import { KdfConfig } from "../models/domain/kdf-config";
 import {
-  PasswordlessLogInCredentials,
+  AuthRequestLoginCredentials,
   PasswordLogInCredentials,
   SsoLogInCredentials,
   UserApiLogInCredentials,
@@ -115,7 +115,7 @@ export class AuthService implements AuthServiceAbstraction {
       | UserApiLogInCredentials
       | PasswordLogInCredentials
       | SsoLogInCredentials
-      | PasswordlessLogInCredentials
+      | AuthRequestLoginCredentials
   ): Promise<AuthResult> {
     this.clearState();
 

@@ -31,7 +31,7 @@ export class UserApiLogInCredentials {
   constructor(public clientId: string, public clientSecret: string) {}
 }
 
-export class PasswordlessLogInCredentials {
+export class AuthRequestLoginCredentials {
   readonly type = AuthenticationType.Passwordless;
 
   constructor(
