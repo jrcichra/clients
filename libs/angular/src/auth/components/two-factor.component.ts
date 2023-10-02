@@ -243,7 +243,11 @@ export class TwoFactorComponent extends CaptchaProtectedComponent implements OnI
     const tdeEnabled = await this.isTrustedDeviceEncEnabled(acctDecryptionOpts.trustedDeviceOption);
 
     if (tdeEnabled) {
-      return await this.handleTrustedDeviceEncryptionEnabled(authResult, this.orgIdentifier);
+      return await this.handleTrustedDeviceEncryptionEnabled(
+        authResult,
+        this.orgIdentifier,
+        acctDecryptionOpts
+      );
     }
 
     // User must set password if they don't have one and they aren't using either TDE or key connector.
@@ -255,9 +259,7 @@ export class TwoFactorComponent extends CaptchaProtectedComponent implements OnI
       return await this.handleChangePasswordRequired(this.orgIdentifier);
     }
 
-    // Users can be forced to reset their password via an admin or org policy
-    // disallowing weak passwords
-    if (authResult.forcePasswordReset !== ForceSetPasswordReason.None) {
+    if (this.isForcePasswordResetRequired(authResult)) {
       return await this.handleForcePasswordReset(this.orgIdentifier);
     }
 
@@ -281,14 +283,24 @@ export class TwoFactorComponent extends CaptchaProtectedComponent implements OnI
 
   private async handleTrustedDeviceEncryptionEnabled(
     authResult: AuthResult,
-    orgIdentifier: string
+    orgIdentifier: string,
+    acctDecryptionOpts: AccountDecryptionOptions
   ): Promise<void> {
-    // Users can be forced to reset their password via an admin or org policy disallowing weak passwords
-    // Note: this is different from SSO component login flow as a user can
-    // login with MP and then have to pass 2FA to finish login and we can actually
-    // evaluate if they have a weak password at this time.
-    if (authResult.forcePasswordReset !== ForceSetPasswordReason.None) {
+    if (this.isForcePasswordResetRequired(authResult)) {
       return await this.handleForcePasswordReset(orgIdentifier);
+    }
+
+    // If user doesn't have a MP, but has reset password permission, they must set a MP
+    if (
+      !acctDecryptionOpts.hasMasterPassword &&
+      acctDecryptionOpts.trustedDeviceOption.hasManageResetPasswordPermission
+    ) {
+      // Set flag so that auth guard can redirect to set password screen after decryption (trusted or untrusted device)
+      // Note: we cannot directly navigate in this scenario as we are in a pre-decryption state, and
+      // if you try to set a new MP before decrypting, you will invalidate the user's data by making a new user key.
+      await this.stateService.setForceSetPasswordReason(
+        ForceSetPasswordReason.TdeUserWithoutPasswordHasPasswordResetPermission
+      );
     }
 
     if (this.onSuccessfulLoginTde != null) {
@@ -311,6 +323,25 @@ export class TwoFactorComponent extends CaptchaProtectedComponent implements OnI
         identifier: orgIdentifier,
       },
     });
+  }
+
+  /**
+   * Determines if a user needs to reset their password based on certain conditions.
+   * Users can be forced to reset their password via an admin or org policy disallowing weak passwords.
+   * Note: this is different from the SSO component login flow as a user can
+   * login with MP and then have to pass 2FA to finish login and we can actually
+   * evaluate if they have a weak password at that time.
+   *
+   * @param {AuthResult} authResult - The authentication result.
+   * @returns {boolean} Returns true if a password reset is required, false otherwise.
+   */
+  private isForcePasswordResetRequired(authResult: AuthResult): boolean {
+    const forceResetReasons = [
+      ForceSetPasswordReason.AdminForcePasswordReset,
+      ForceSetPasswordReason.WeakMasterPassword,
+    ];
+
+    return forceResetReasons.includes(authResult.forcePasswordReset);
   }
 
   private async handleForcePasswordReset(orgIdentifier: string) {

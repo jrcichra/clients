@@ -207,7 +207,11 @@ export class SsoComponent {
       );
 
       if (tdeEnabled) {
-        return await this.handleTrustedDeviceEncryptionEnabled(authResult, orgIdentifier);
+        return await this.handleTrustedDeviceEncryptionEnabled(
+          authResult,
+          orgIdentifier,
+          acctDecryptionOpts
+        );
       }
 
       // In the standard, non TDE case, a user must set password if they don't
@@ -224,6 +228,7 @@ export class SsoComponent {
 
       // Users enrolled in admin acct recovery can be forced to set a new password after
       // having the admin set a temp password for them
+      // Weak password is not a valid scenario here b/c we cannot have evaluated a MP yet
       if (authResult.forcePasswordReset == ForceSetPasswordReason.AdminForcePasswordReset) {
         return await this.handleForcePasswordReset(orgIdentifier);
       }
@@ -260,10 +265,27 @@ export class SsoComponent {
 
   private async handleTrustedDeviceEncryptionEnabled(
     authResult: AuthResult,
-    orgIdentifier: string
+    orgIdentifier: string,
+    acctDecryptionOpts: AccountDecryptionOptions
   ): Promise<void> {
-    if (authResult.forcePasswordReset !== ForceSetPasswordReason.None) {
+    // TDE Users enrolled in admin acct recovery can be forced to set a new password after
+    // having the admin set a temp password for them
+    // Weak password is not a valid scenario here b/c we cannot have evaluated a MP yet even if they had one.
+    if (authResult.forcePasswordReset == ForceSetPasswordReason.AdminForcePasswordReset) {
       return await this.handleForcePasswordReset(orgIdentifier);
+    }
+
+    // If user doesn't have a MP, but has reset password permission, they must set a MP
+    if (
+      !acctDecryptionOpts.hasMasterPassword &&
+      acctDecryptionOpts.trustedDeviceOption.hasManageResetPasswordPermission
+    ) {
+      // Set flag so that auth guard can redirect to set password screen after decryption (trusted or untrusted device)
+      // Note: we cannot directly navigate in this scenario as we are in a pre-decryption state, and
+      // if you try to set a new MP before decrypting, you will invalidate the user's data by making a new user key.
+      await this.stateService.setForceSetPasswordReason(
+        ForceSetPasswordReason.TdeUserWithoutPasswordHasPasswordResetPermission
+      );
     }
 
     if (this.onSuccessfulLoginTde != null) {
