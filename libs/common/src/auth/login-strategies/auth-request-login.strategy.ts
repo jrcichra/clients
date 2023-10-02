@@ -16,7 +16,7 @@ import { IdentityTokenResponse } from "../models/response/identity-token.respons
 
 import { LogInStrategy } from "./login.strategy";
 
-export class LoginWithDeviceLoginStrategy extends LogInStrategy {
+export class AuthRequestLoginStrategy extends LogInStrategy {
   get email() {
     return this.tokenRequest.email;
   }
