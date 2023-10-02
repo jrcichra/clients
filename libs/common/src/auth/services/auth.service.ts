@@ -29,7 +29,7 @@ import { AuthenticationType } from "../enums/authentication-type";
 import { AuthRequestLoginStrategy } from "../login-strategies/auth-request-login.strategy";
 import { PasswordLoginStrategy } from "../login-strategies/password-login.strategy";
 import { SsoLoginStrategy } from "../login-strategies/sso-login.strategy";
-import { UserApiLogInStrategy } from "../login-strategies/user-api-login.strategy";
+import { UserApiLoginStrategy } from "../login-strategies/user-api-login.strategy";
 import { AuthResult } from "../models/domain/auth-result";
 import { KdfConfig } from "../models/domain/kdf-config";
 import {
@@ -82,7 +82,7 @@ export class AuthService implements AuthServiceAbstraction {
   }
 
   private logInStrategy:
-    | UserApiLogInStrategy
+    | UserApiLoginStrategy
     | PasswordLoginStrategy
     | SsoLoginStrategy
     | AuthRequestLoginStrategy;
@@ -120,7 +120,7 @@ export class AuthService implements AuthServiceAbstraction {
     this.clearState();
 
     let strategy:
-      | UserApiLogInStrategy
+      | UserApiLoginStrategy
       | PasswordLoginStrategy
       | SsoLoginStrategy
       | AuthRequestLoginStrategy;
@@ -160,7 +160,7 @@ export class AuthService implements AuthServiceAbstraction {
         );
         break;
       case AuthenticationType.UserApi:
-        strategy = new UserApiLogInStrategy(
+        strategy = new UserApiLoginStrategy(
           this.cryptoService,
           this.apiService,
           this.tokenService,
@@ -229,7 +229,7 @@ export class AuthService implements AuthServiceAbstraction {
   }
 
   authingWithUserApiKey(): boolean {
-    return this.logInStrategy instanceof UserApiLogInStrategy;
+    return this.logInStrategy instanceof UserApiLoginStrategy;
   }
 
   authingWithSso(): boolean {
@@ -349,7 +349,7 @@ export class AuthService implements AuthServiceAbstraction {
 
   private saveState(
     strategy:
-      | UserApiLogInStrategy
+      | UserApiLoginStrategy
       | PasswordLoginStrategy
       | SsoLoginStrategy
       | AuthRequestLoginStrategy

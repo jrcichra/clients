@@ -15,7 +15,7 @@ import { IdentityTokenResponse } from "../models/response/identity-token.respons
 
 import { LoginStrategy } from "./login.strategy";
 
-export class UserApiLogInStrategy extends LoginStrategy {
+export class UserApiLoginStrategy extends LoginStrategy {
   tokenRequest: UserApiTokenRequest;
 
   constructor(

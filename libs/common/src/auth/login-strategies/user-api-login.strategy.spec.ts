@@ -21,9 +21,9 @@ import { TwoFactorService } from "../abstractions/two-factor.service";
 import { UserApiLogInCredentials } from "../models/domain/log-in-credentials";
 
 import { identityTokenResponseFactory } from "./login.strategy.spec";
-import { UserApiLogInStrategy } from "./user-api-login.strategy";
+import { UserApiLoginStrategy } from "./user-api-login.strategy";
 
-describe("UserApiLogInStrategy", () => {
+describe("UserApiLoginStrategy", () => {
   let cryptoService: MockProxy<CryptoService>;
   let apiService: MockProxy<ApiService>;
   let tokenService: MockProxy<TokenService>;
@@ -36,7 +36,7 @@ describe("UserApiLogInStrategy", () => {
   let keyConnectorService: MockProxy<KeyConnectorService>;
   let environmentService: MockProxy<EnvironmentService>;
 
-  let apiLogInStrategy: UserApiLogInStrategy;
+  let apiLogInStrategy: UserApiLoginStrategy;
   let credentials: UserApiLogInCredentials;
 
   const deviceId = Utils.newGuid();
@@ -61,7 +61,7 @@ describe("UserApiLogInStrategy", () => {
     tokenService.getTwoFactorToken.mockResolvedValue(null);
     tokenService.decodeToken.mockResolvedValue({});
 
-    apiLogInStrategy = new UserApiLogInStrategy(
+    apiLogInStrategy = new UserApiLoginStrategy(
       cryptoService,
       apiService,
       tokenService,
