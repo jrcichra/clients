@@ -34,9 +34,9 @@ import { AuthResult } from "../models/domain/auth-result";
 import { KdfConfig } from "../models/domain/kdf-config";
 import {
   AuthRequestLoginCredentials,
-  PasswordLogInCredentials,
-  SsoLogInCredentials,
-  UserApiLogInCredentials,
+  PasswordLoginCredentials,
+  SsoLoginCredentials,
+  UserApiLoginCredentials,
 } from "../models/domain/log-in-credentials";
 import { TokenTwoFactorRequest } from "../models/request/identity-token/token-two-factor.request";
 import { PasswordlessAuthRequest } from "../models/request/passwordless-auth.request";
@@ -112,9 +112,9 @@ export class AuthService implements AuthServiceAbstraction {
 
   async logIn(
     credentials:
-      | UserApiLogInCredentials
-      | PasswordLogInCredentials
-      | SsoLogInCredentials
+      | UserApiLoginCredentials
+      | PasswordLoginCredentials
+      | SsoLoginCredentials
       | AuthRequestLoginCredentials
   ): Promise<AuthResult> {
     this.clearState();

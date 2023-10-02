@@ -15,7 +15,7 @@ import { TokenService } from "../abstractions/token.service";
 import { TwoFactorService } from "../abstractions/two-factor.service";
 import { AuthResult } from "../models/domain/auth-result";
 import { ForceResetPasswordReason } from "../models/domain/force-reset-password-reason";
-import { PasswordLogInCredentials } from "../models/domain/log-in-credentials";
+import { PasswordLoginCredentials } from "../models/domain/log-in-credentials";
 import { PasswordTokenRequest } from "../models/request/identity-token/password-token.request";
 import { TokenTwoFactorRequest } from "../models/request/identity-token/token-two-factor.request";
 import { IdentityCaptchaResponse } from "../models/response/identity-captcha.response";
@@ -91,7 +91,7 @@ export class PasswordLoginStrategy extends LoginStrategy {
     return result;
   }
 
-  override async logIn(credentials: PasswordLogInCredentials) {
+  override async logIn(credentials: PasswordLoginCredentials) {
     const { email, masterPassword, captchaToken, twoFactor } = credentials;
 
     this.masterKey = await this.authService.makePreloginKey(masterPassword, email);
@@ -180,7 +180,7 @@ export class PasswordLoginStrategy extends LoginStrategy {
   }
 
   private evaluateMasterPassword(
-    { masterPassword, email }: PasswordLogInCredentials,
+    { masterPassword, email }: PasswordLoginCredentials,
     options: MasterPasswordPolicyOptions
   ): boolean {
     const passwordStrength = this.passwordStrengthService.getPasswordStrength(

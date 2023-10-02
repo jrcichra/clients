@@ -21,7 +21,7 @@ import { DeviceTrustCryptoServiceAbstraction } from "../abstractions/device-trus
 import { KeyConnectorService } from "../abstractions/key-connector.service";
 import { TokenService } from "../abstractions/token.service";
 import { TwoFactorService } from "../abstractions/two-factor.service";
-import { SsoLogInCredentials } from "../models/domain/log-in-credentials";
+import { SsoLoginCredentials } from "../models/domain/log-in-credentials";
 import { IdentityTokenResponse } from "../models/response/identity-token.response";
 import { IUserDecryptionOptionsServerResponse } from "../models/response/user-decryption-options/user-decryption-options.response";
 
@@ -47,7 +47,7 @@ describe("SsoLoginStrategy", () => {
   let i18nService: MockProxy<I18nService>;
 
   let ssoLoginStrategy: SsoLoginStrategy;
-  let credentials: SsoLogInCredentials;
+  let credentials: SsoLoginCredentials;
 
   const deviceId = Utils.newGuid();
   const keyConnectorUrl = "KEY_CONNECTOR_URL";
@@ -91,7 +91,7 @@ describe("SsoLoginStrategy", () => {
       authRequestCryptoService,
       i18nService
     );
-    credentials = new SsoLogInCredentials(ssoCode, ssoCodeVerifier, ssoRedirectUrl, ssoOrgId);
+    credentials = new SsoLoginCredentials(ssoCode, ssoCodeVerifier, ssoRedirectUrl, ssoOrgId);
   });
 
   it("sends SSO information to server", async () => {

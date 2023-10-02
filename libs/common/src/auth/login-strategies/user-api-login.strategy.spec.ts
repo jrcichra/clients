@@ -18,7 +18,7 @@ import { CsprngArray } from "../../types/csprng";
 import { KeyConnectorService } from "../abstractions/key-connector.service";
 import { TokenService } from "../abstractions/token.service";
 import { TwoFactorService } from "../abstractions/two-factor.service";
-import { UserApiLogInCredentials } from "../models/domain/log-in-credentials";
+import { UserApiLoginCredentials } from "../models/domain/log-in-credentials";
 
 import { identityTokenResponseFactory } from "./login.strategy.spec";
 import { UserApiLoginStrategy } from "./user-api-login.strategy";
@@ -37,7 +37,7 @@ describe("UserApiLoginStrategy", () => {
   let environmentService: MockProxy<EnvironmentService>;
 
   let apiLogInStrategy: UserApiLoginStrategy;
-  let credentials: UserApiLogInCredentials;
+  let credentials: UserApiLoginCredentials;
 
   const deviceId = Utils.newGuid();
   const keyConnectorUrl = "KEY_CONNECTOR_URL";
@@ -75,7 +75,7 @@ describe("UserApiLoginStrategy", () => {
       keyConnectorService
     );
 
-    credentials = new UserApiLogInCredentials(apiClientId, apiClientSecret);
+    credentials = new UserApiLoginCredentials(apiClientId, apiClientSecret);
   });
 
   it("sends api key credentials to the server", async () => {

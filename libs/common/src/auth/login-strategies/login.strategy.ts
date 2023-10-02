@@ -21,9 +21,9 @@ import { AuthResult } from "../models/domain/auth-result";
 import { ForceResetPasswordReason } from "../models/domain/force-reset-password-reason";
 import {
   AuthRequestLoginCredentials,
-  PasswordLogInCredentials,
-  SsoLogInCredentials,
-  UserApiLogInCredentials,
+  PasswordLoginCredentials,
+  SsoLoginCredentials,
+  UserApiLoginCredentials,
 } from "../models/domain/log-in-credentials";
 import { DeviceRequest } from "../models/request/identity-token/device.request";
 import { PasswordTokenRequest } from "../models/request/identity-token/password-token.request";
@@ -54,9 +54,9 @@ export abstract class LoginStrategy {
 
   abstract logIn(
     credentials:
-      | UserApiLogInCredentials
-      | PasswordLogInCredentials
-      | SsoLogInCredentials
+      | UserApiLoginCredentials
+      | PasswordLoginCredentials
+      | SsoLoginCredentials
       | AuthRequestLoginCredentials
   ): Promise<AuthResult>;
 

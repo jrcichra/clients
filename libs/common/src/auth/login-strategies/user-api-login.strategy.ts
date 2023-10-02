@@ -9,7 +9,7 @@ import { MessagingService } from "../../platform/abstractions/messaging.service"
 import { PlatformUtilsService } from "../../platform/abstractions/platform-utils.service";
 import { StateService } from "../../platform/abstractions/state.service";
 import { KeyConnectorService } from "../abstractions/key-connector.service";
-import { UserApiLogInCredentials } from "../models/domain/log-in-credentials";
+import { UserApiLoginCredentials } from "../models/domain/log-in-credentials";
 import { UserApiTokenRequest } from "../models/request/identity-token/user-api-token.request";
 import { IdentityTokenResponse } from "../models/response/identity-token.response";
 
@@ -44,7 +44,7 @@ export class UserApiLoginStrategy extends LoginStrategy {
     );
   }
 
-  override async logIn(credentials: UserApiLogInCredentials) {
+  override async logIn(credentials: UserApiLoginCredentials) {
     this.tokenRequest = new UserApiTokenRequest(
       credentials.clientId,
       credentials.clientSecret,

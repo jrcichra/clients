@@ -34,7 +34,7 @@ import { TwoFactorService } from "../abstractions/two-factor.service";
 import { TwoFactorProviderType } from "../enums/two-factor-provider-type";
 import { AuthResult } from "../models/domain/auth-result";
 import { ForceResetPasswordReason } from "../models/domain/force-reset-password-reason";
-import { PasswordLogInCredentials } from "../models/domain/log-in-credentials";
+import { PasswordLoginCredentials } from "../models/domain/log-in-credentials";
 import { PasswordTokenRequest } from "../models/request/identity-token/password-token.request";
 import { TokenTwoFactorRequest } from "../models/request/identity-token/token-two-factor.request";
 import { IdentityCaptchaResponse } from "../models/response/identity-captcha.response";
@@ -111,7 +111,7 @@ describe("LoginStrategy", () => {
   let passwordStrengthService: MockProxy<PasswordStrengthServiceAbstraction>;
 
   let passwordLoginStrategy: PasswordLoginStrategy;
-  let credentials: PasswordLogInCredentials;
+  let credentials: PasswordLoginCredentials;
 
   beforeEach(async () => {
     cryptoService = mock<CryptoService>();
@@ -145,7 +145,7 @@ describe("LoginStrategy", () => {
       policyService,
       authService
     );
-    credentials = new PasswordLogInCredentials(email, masterPassword);
+    credentials = new PasswordLoginCredentials(email, masterPassword);
   });
 
   describe("base class", () => {

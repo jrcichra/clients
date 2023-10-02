@@ -5,9 +5,9 @@ import { MasterKey } from "../../platform/models/domain/symmetric-crypto-key";
 import { AuthenticationStatus } from "../enums/authentication-status";
 import { AuthResult } from "../models/domain/auth-result";
 import {
-  UserApiLogInCredentials,
-  PasswordLogInCredentials,
-  SsoLogInCredentials,
+  UserApiLoginCredentials,
+  PasswordLoginCredentials,
+  SsoLoginCredentials,
   AuthRequestLoginCredentials,
 } from "../models/domain/log-in-credentials";
 import { TokenTwoFactorRequest } from "../models/request/identity-token/token-two-factor.request";
@@ -22,9 +22,9 @@ export abstract class AuthService {
 
   logIn: (
     credentials:
-      | UserApiLogInCredentials
-      | PasswordLogInCredentials
-      | SsoLogInCredentials
+      | UserApiLoginCredentials
+      | PasswordLoginCredentials
+      | SsoLoginCredentials
       | AuthRequestLoginCredentials
   ) => Promise<AuthResult>;
   logInTwoFactor: (

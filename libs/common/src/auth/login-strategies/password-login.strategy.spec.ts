@@ -25,7 +25,7 @@ import { TokenService } from "../abstractions/token.service";
 import { TwoFactorService } from "../abstractions/two-factor.service";
 import { TwoFactorProviderType } from "../enums/two-factor-provider-type";
 import { ForceResetPasswordReason } from "../models/domain/force-reset-password-reason";
-import { PasswordLogInCredentials } from "../models/domain/log-in-credentials";
+import { PasswordLoginCredentials } from "../models/domain/log-in-credentials";
 import { IdentityTokenResponse } from "../models/response/identity-token.response";
 import { IdentityTwoFactorResponse } from "../models/response/identity-two-factor.response";
 import { MasterPasswordPolicyResponse } from "../models/response/master-password-policy.response";
@@ -63,7 +63,7 @@ describe("PasswordLoginStrategy", () => {
   let passwordStrengthService: MockProxy<PasswordStrengthServiceAbstraction>;
 
   let passwordLoginStrategy: PasswordLoginStrategy;
-  let credentials: PasswordLogInCredentials;
+  let credentials: PasswordLoginCredentials;
   let tokenResponse: IdentityTokenResponse;
 
   beforeEach(async () => {
@@ -108,7 +108,7 @@ describe("PasswordLoginStrategy", () => {
       policyService,
       authService
     );
-    credentials = new PasswordLogInCredentials(email, masterPassword);
+    credentials = new PasswordLoginCredentials(email, masterPassword);
     tokenResponse = identityTokenResponseFactory(masterPasswordPolicy);
 
     apiService.postIdentityToken.mockResolvedValue(tokenResponse);
