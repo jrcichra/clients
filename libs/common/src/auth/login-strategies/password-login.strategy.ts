@@ -24,7 +24,7 @@ import { IdentityTwoFactorResponse } from "../models/response/identity-two-facto
 
 import { LoginStrategy } from "./login.strategy";
 
-export class PasswordLogInStrategy extends LoginStrategy {
+export class PasswordLoginStrategy extends LoginStrategy {
   get email() {
     return this.tokenRequest.email;
   }

@@ -27,7 +27,7 @@ import { TwoFactorService } from "../abstractions/two-factor.service";
 import { AuthenticationStatus } from "../enums/authentication-status";
 import { AuthenticationType } from "../enums/authentication-type";
 import { AuthRequestLoginStrategy } from "../login-strategies/auth-request-login.strategy";
-import { PasswordLogInStrategy } from "../login-strategies/password-login.strategy";
+import { PasswordLoginStrategy } from "../login-strategies/password-login.strategy";
 import { SsoLogInStrategy } from "../login-strategies/sso-login.strategy";
 import { UserApiLogInStrategy } from "../login-strategies/user-api-login.strategy";
 import { AuthResult } from "../models/domain/auth-result";
@@ -47,7 +47,7 @@ const sessionTimeoutLength = 2 * 60 * 1000; // 2 minutes
 export class AuthService implements AuthServiceAbstraction {
   get email(): string {
     if (
-      this.logInStrategy instanceof PasswordLogInStrategy ||
+      this.logInStrategy instanceof PasswordLoginStrategy ||
       this.logInStrategy instanceof AuthRequestLoginStrategy ||
       this.logInStrategy instanceof SsoLogInStrategy
     ) {
@@ -58,7 +58,7 @@ export class AuthService implements AuthServiceAbstraction {
   }
 
   get masterPasswordHash(): string {
-    return this.logInStrategy instanceof PasswordLogInStrategy
+    return this.logInStrategy instanceof PasswordLoginStrategy
       ? this.logInStrategy.masterPasswordHash
       : null;
   }
@@ -83,7 +83,7 @@ export class AuthService implements AuthServiceAbstraction {
 
   private logInStrategy:
     | UserApiLogInStrategy
-    | PasswordLogInStrategy
+    | PasswordLoginStrategy
     | SsoLogInStrategy
     | AuthRequestLoginStrategy;
   private sessionTimeout: any;
@@ -121,13 +121,13 @@ export class AuthService implements AuthServiceAbstraction {
 
     let strategy:
       | UserApiLogInStrategy
-      | PasswordLogInStrategy
+      | PasswordLoginStrategy
       | SsoLogInStrategy
       | AuthRequestLoginStrategy;
 
     switch (credentials.type) {
       case AuthenticationType.Password:
-        strategy = new PasswordLogInStrategy(
+        strategy = new PasswordLoginStrategy(
           this.cryptoService,
           this.apiService,
           this.tokenService,
@@ -237,7 +237,7 @@ export class AuthService implements AuthServiceAbstraction {
   }
 
   authingWithPassword(): boolean {
-    return this.logInStrategy instanceof PasswordLogInStrategy;
+    return this.logInStrategy instanceof PasswordLoginStrategy;
   }
 
   authingWithPasswordless(): boolean {
@@ -350,7 +350,7 @@ export class AuthService implements AuthServiceAbstraction {
   private saveState(
     strategy:
       | UserApiLogInStrategy
-      | PasswordLogInStrategy
+      | PasswordLoginStrategy
       | SsoLogInStrategy
       | AuthRequestLoginStrategy
   ) {
