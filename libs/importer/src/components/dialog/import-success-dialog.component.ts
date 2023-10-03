@@ -1,8 +1,10 @@
 import { DialogRef, DIALOG_DATA } from "@angular/cdk/dialog";
+import { CommonModule } from "@angular/common";
 import { Component, Inject, OnInit } from "@angular/core";
 
+import { JslibModule } from "@bitwarden/angular/jslib.module";
 import { CipherType } from "@bitwarden/common/vault/enums/cipher-type";
-import { TableDataSource } from "@bitwarden/components";
+import { ButtonModule, DialogModule, TableDataSource, TableModule } from "@bitwarden/components";
 import { ImportResult } from "@bitwarden/importer";
 
 export interface ResultList {
@@ -13,6 +15,8 @@ export interface ResultList {
 
 @Component({
   templateUrl: "./import-success-dialog.component.html",
+  standalone: true,
+  imports: [CommonModule, JslibModule, DialogModule, TableModule, ButtonModule],
 })
 export class ImportSuccessDialogComponent implements OnInit {
   protected dataSource = new TableDataSource<ResultList>();

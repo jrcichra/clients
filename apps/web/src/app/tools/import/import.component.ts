@@ -27,13 +27,10 @@ import {
   ImportResult,
   ImportServiceAbstraction,
   ImportType,
-} from "@bitwarden/importer";
-
-import {
   FilePasswordPromptComponent,
   ImportErrorDialogComponent,
   ImportSuccessDialogComponent,
-} from "./dialog";
+} from "@bitwarden/importer";
 
 @Component({
   selector: "app-import",

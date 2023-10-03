@@ -15,22 +15,12 @@ import {
 
 import { LooseComponentsModule, SharedModule } from "../../shared";
 
-import {
-  ImportErrorDialogComponent,
-  ImportSuccessDialogComponent,
-  FilePasswordPromptComponent,
-} from "./dialog";
 import { ImportRoutingModule } from "./import-routing.module";
 import { ImportComponent } from "./import.component";
 
 @NgModule({
   imports: [SharedModule, LooseComponentsModule, ImportRoutingModule],
-  declarations: [
-    ImportComponent,
-    FilePasswordPromptComponent,
-    ImportErrorDialogComponent,
-    ImportSuccessDialogComponent,
-  ],
+  declarations: [ImportComponent],
   providers: [
     {
       provide: ImportApiServiceAbstraction,
