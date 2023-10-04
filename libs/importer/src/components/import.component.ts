@@ -1,27 +1,42 @@
-import { Component, OnDestroy, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Router } from "@angular/router";
+import { CommonModule } from "@angular/common";
+import { Component, OnDestroy, OnInit, ViewChild } from "@angular/core";
+import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
+import { ActivatedRoute, Router } from "@angular/router";
 import * as JSZip from "jszip";
 import { concat, Observable, Subject, lastValueFrom, combineLatest } from "rxjs";
-import { map, takeUntil } from "rxjs/operators";
+import { map, switchMap, takeUntil } from "rxjs/operators";
 
+import { JslibModule } from "@bitwarden/angular/jslib.module";
+import { ApiService } from "@bitwarden/common/abstractions/api.service";
 import {
   canAccessImportExport,
+  canAccessVaultTab,
   OrganizationService,
 } from "@bitwarden/common/admin-console/abstractions/organization/organization.service.abstraction";
 import { PolicyService } from "@bitwarden/common/admin-console/abstractions/policy/policy.service.abstraction";
 import { PolicyType } from "@bitwarden/common/admin-console/enums";
 import { Organization } from "@bitwarden/common/admin-console/models/domain/organization";
+import { CryptoService } from "@bitwarden/common/platform/abstractions/crypto.service";
 import { I18nService } from "@bitwarden/common/platform/abstractions/i18n.service";
 import { LogService } from "@bitwarden/common/platform/abstractions/log.service";
 import { PlatformUtilsService } from "@bitwarden/common/platform/abstractions/platform-utils.service";
 import { Utils } from "@bitwarden/common/platform/misc/utils";
+import { CipherService } from "@bitwarden/common/vault/abstractions/cipher.service";
 import { CollectionService } from "@bitwarden/common/vault/abstractions/collection.service";
 import { FolderService } from "@bitwarden/common/vault/abstractions/folder/folder.service.abstraction";
 import { SyncService } from "@bitwarden/common/vault/abstractions/sync/sync.service.abstraction";
 import { CollectionView } from "@bitwarden/common/vault/models/view/collection.view";
 import { FolderView } from "@bitwarden/common/vault/models/view/folder.view";
-import { DialogService } from "@bitwarden/components";
+import {
+  AsyncActionsModule,
+  BitSubmitDirective,
+  ButtonModule,
+  CalloutModule,
+  DialogService,
+  FormFieldModule,
+  IconButtonModule,
+  SelectModule,
+} from "@bitwarden/components";
 import {
   ImportOption,
   ImportResult,
@@ -30,11 +45,45 @@ import {
   FilePasswordPromptComponent,
   ImportErrorDialogComponent,
   ImportSuccessDialogComponent,
+  ImportApiServiceAbstraction,
+  ImportApiService,
+  ImportService,
 } from "@bitwarden/importer";
 
 @Component({
   selector: "app-import",
   templateUrl: "import.component.html",
+  standalone: true,
+  imports: [
+    CommonModule,
+    JslibModule,
+    FormFieldModule,
+    AsyncActionsModule,
+    ButtonModule,
+    IconButtonModule,
+    SelectModule,
+    CalloutModule,
+    ReactiveFormsModule,
+  ],
+  providers: [
+    {
+      provide: ImportApiServiceAbstraction,
+      useClass: ImportApiService,
+      deps: [ApiService],
+    },
+    {
+      provide: ImportServiceAbstraction,
+      useClass: ImportService,
+      deps: [
+        CipherService,
+        FolderService,
+        ImportApiServiceAbstraction,
+        I18nService,
+        CollectionService,
+        CryptoService,
+      ],
+    },
+  ],
 })
 export class ImportComponent implements OnInit, OnDestroy {
   featuredImportOptions: ImportOption[];
@@ -47,6 +96,7 @@ export class ImportComponent implements OnInit, OnDestroy {
   organizations$: Observable<Organization[]>;
 
   protected organizationId: string = null;
+  protected organization: Organization;
   protected destroy$ = new Subject<void>();
 
   private _importBlockedByPolicy = false;
@@ -65,6 +115,9 @@ export class ImportComponent implements OnInit, OnDestroy {
     file: [],
   });
 
+  @ViewChild(BitSubmitDirective)
+  bitSubmit: BitSubmitDirective;
+
   constructor(
     protected i18nService: I18nService,
     protected importService: ImportServiceAbstraction,
@@ -77,7 +130,8 @@ export class ImportComponent implements OnInit, OnDestroy {
     protected folderService: FolderService,
     protected collectionService: CollectionService,
     protected organizationService: OrganizationService,
-    protected formBuilder: FormBuilder
+    protected formBuilder: FormBuilder,
+    private route: ActivatedRoute
   ) {}
 
   protected get importBlockedByPolicy(): boolean {
@@ -88,10 +142,29 @@ export class ImportComponent implements OnInit, OnDestroy {
    * Callback that is called after a successful import.
    */
   protected async onSuccessfulImport(): Promise<void> {
-    await this.router.navigate(["vault"]);
+    if (this.organization) {
+      if (canAccessVaultTab(this.organization)) {
+        await this.router.navigate(["organizations", this.organizationId, "vault"]);
+      } else {
+        this.fileSelected = null;
+      }
+    } else {
+      await this.router.navigate(["vault"]);
+    }
   }
 
   ngOnInit() {
+    //
+    this.route.params
+      .pipe(
+        switchMap((params) => this.organizationService.get$(params.organizationId)),
+        takeUntil(this.destroy$)
+      )
+      .subscribe((organization) => {
+        this.organizationId = organization?.id;
+        this.organization = organization;
+      });
+
     this.setImportOptions();
 
     this.organizations$ = concat(
@@ -164,6 +237,18 @@ export class ImportComponent implements OnInit, OnDestroy {
   };
 
   protected async performImport() {
+    if (this.organization) {
+      const confirmed = await this.dialogService.openSimpleDialog({
+        title: { key: "warning" },
+        content: { key: "importWarning", placeholders: [this.organization.name] },
+        type: "warning",
+      });
+
+      if (!confirmed) {
+        return;
+      }
+    }
+
     if (this.importBlockedByPolicy) {
       this.platformUtilsService.showToast(
         "error",

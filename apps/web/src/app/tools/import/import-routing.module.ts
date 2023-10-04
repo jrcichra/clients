@@ -1,12 +1,12 @@
 import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
 
-import { ImportComponent } from "./import.component";
+import { ImportWebComponent } from "./import-web.component";
 
 const routes: Routes = [
   {
     path: "",
-    component: ImportComponent,
+    component: ImportWebComponent,
     data: { titleId: "importData" },
   },
 ];

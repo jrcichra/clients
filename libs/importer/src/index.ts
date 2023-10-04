@@ -11,3 +11,5 @@ export { ImportService } from "./services/import.service";
 export { Importer } from "./importers/importer";
 
 export * from "./components/dialog";
+
+export { ImportComponent } from "./components/import.component";
