@@ -1,0 +1,26 @@
+<bit-dialog>
+  <span bitDialogTitle>{{ "importData" | i18n }}</span>
+  <ng-container bitDialogContent>
+    <app-import #import></app-import>
+  </ng-container>
+  <ng-container bitDialogFooter>
+    <button
+      *ngIf="import.bitSubmit"
+      [disabled]="import.bitSubmit.disabled$ | async"
+      [loading]="import.bitSubmit.loading$ | async"
+      form="importForm"
+      bitButton
+      type="submit"
+      bitFormButton
+      buttonType="primary"
+    >
+      {{ "importData" | i18n }}
+    </button>
+    <!-- <button type="submit" bitButton bitFormButton buttonType="primary" [disabled]="importBlockedByPolicy">
+          {{ "importData" | i18n }}        
+        </button> -->
+    <button type="button" bitButton bitFormButton buttonType="secondary" bitDialogClose>
+      {{ "cancel" | i18n }}
+    </button>
+  </ng-container>
+</bit-dialog>
