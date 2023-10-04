@@ -130,13 +130,26 @@ export class SetPasswordComponent extends BaseChangePasswordComponent {
     masterKey: MasterKey,
     userKey: [UserKey, EncString]
   ) {
-    const newKeyPair = await this.cryptoService.makeKeyPair(userKey[0]);
+    let keysRequest: KeysRequest | null = null;
+    let newKeyPair: [string, EncString] | null = null;
+
+    if (
+      this.forceSetPasswordReason !=
+      ForceSetPasswordReason.TdeUserWithoutPasswordHasPasswordResetPermission
+    ) {
+      // Existing JIT provisioned user in a MP encryption org setting first password
+      // Users in this state will not already have a user asymmetric key pair so must create it for them
+      // We don't want to re-create the user key pair if the user already has one (TDE user case)
+      newKeyPair = await this.cryptoService.makeKeyPair(userKey[0]);
+      keysRequest = new KeysRequest(newKeyPair[0], newKeyPair[1].encryptedString);
+    }
+
     const request = new SetPasswordRequest(
       masterPasswordHash,
       userKey[1].encryptedString,
       this.hint,
       this.orgSsoIdentifier,
-      new KeysRequest(newKeyPair[0], newKeyPair[1].encryptedString),
+      keysRequest,
       this.kdf,
       this.kdfConfig.iterations,
       this.kdfConfig.memory,
@@ -200,13 +213,22 @@ export class SetPasswordComponent extends BaseChangePasswordComponent {
   private async onSetPasswordSuccess(
     masterKey: MasterKey,
     userKey: [UserKey, EncString],
-    keyPair: [string, EncString]
+    keyPair: [string, EncString] | null
   ) {
     await this.stateService.setKdfType(this.kdf);
     await this.stateService.setKdfConfig(this.kdfConfig);
     await this.cryptoService.setMasterKey(masterKey);
     await this.cryptoService.setUserKey(userKey[0]);
-    await this.cryptoService.setPrivateKey(keyPair[1].encryptedString);
+
+    // Set private key only for new JIT provisioned users in MP encryption orgs
+    // Existing TDE users will have private key set on sync or on login
+    if (
+      keyPair &&
+      this.forceSetPasswordReason !=
+        ForceSetPasswordReason.TdeUserWithoutPasswordHasPasswordResetPermission
+    ) {
+      await this.cryptoService.setPrivateKey(keyPair[1].encryptedString);
+    }
 
     const localMasterKeyHash = await this.cryptoService.hashMasterKey(
       this.masterPassword,
