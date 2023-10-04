@@ -63,7 +63,6 @@ export class LoginWithDeviceComponent
   protected twoFactorRoute = "2fa";
   protected successRoute = "vault";
   protected forcePasswordResetRoute = "update-temp-password";
-  protected setPasswordRoute = "set-password";
   private resendTimeout = 12000;
 
   private authRequestKeyPair: { publicKey: Uint8Array; privateKey: Uint8Array };
