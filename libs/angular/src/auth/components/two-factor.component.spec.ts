@@ -379,6 +379,34 @@ describe("TwoFactorComponent", () => {
           mockConfigService.getFeatureFlag.mockResolvedValue(true);
         });
 
+        describe("Given Trusted Device Encryption is enabled and user needs to set a master password", () => {
+          beforeEach(() => {
+            mockStateService.getAccountDecryptionOptions.mockResolvedValue(
+              mockAcctDecryptionOpts.noMasterPasswordWithTrustedDeviceWithManageResetPassword
+            );
+
+            const authResult = new AuthResult();
+            mockAuthService.logInTwoFactor.mockResolvedValue(authResult);
+          });
+
+          it("navigates to the component's defined trusted device encryption route and sets correct flag when user doesn't have a MP and key connector isn't enabled", async () => {
+            // Act
+            await component.doSubmit();
+
+            // Assert
+
+            expect(mockStateService.setForceSetPasswordReason).toHaveBeenCalledWith(
+              ForceSetPasswordReason.TdeUserWithoutPasswordHasPasswordResetPermission
+            );
+
+            expect(mockRouter.navigate).toHaveBeenCalledTimes(1);
+            expect(mockRouter.navigate).toHaveBeenCalledWith(
+              [_component.trustedDeviceEncRoute],
+              undefined
+            );
+          });
+        });
+
         describe("Given Trusted Device Encryption is enabled, user doesn't need to set a MP, and forcePasswordReset is required", () => {
           [
             ForceSetPasswordReason.AdminForcePasswordReset,

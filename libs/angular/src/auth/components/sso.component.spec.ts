@@ -334,6 +334,37 @@ describe("SsoComponent", () => {
         mockConfigService.getFeatureFlag.mockResolvedValue(true); // TDE enabled
       });
 
+      describe("Given Trusted Device Encryption is enabled and user needs to set a master password", () => {
+        let authResult;
+        beforeEach(() => {
+          mockStateService.getAccountDecryptionOptions.mockResolvedValue(
+            mockAcctDecryptionOpts.noMasterPasswordWithTrustedDeviceWithManageResetPassword
+          );
+
+          authResult = new AuthResult();
+          mockAuthService.logIn.mockResolvedValue(authResult);
+        });
+
+        it("navigates to the component's defined trustedDeviceEncRoute route and sets correct flag when onSuccessfulLoginTdeNavigate is undefined ", async () => {
+          await _component.logIn(code, codeVerifier, orgIdFromState);
+          expect(mockAuthService.logIn).toHaveBeenCalledTimes(1);
+
+          expect(mockStateService.setForceSetPasswordReason).toHaveBeenCalledWith(
+            ForceSetPasswordReason.TdeUserWithoutPasswordHasPasswordResetPermission
+          );
+
+          expect(mockOnSuccessfulLoginTdeNavigate).not.toHaveBeenCalled();
+
+          expect(mockRouter.navigate).toHaveBeenCalledTimes(1);
+          expect(mockRouter.navigate).toHaveBeenCalledWith(
+            [_component.trustedDeviceEncRoute],
+            undefined
+          );
+
+          expect(mockLogService.error).not.toHaveBeenCalled();
+        });
+      });
+
       describe("Given Trusted Device Encryption is enabled, user doesn't need to set a MP, and forcePasswordReset is required", () => {
         [
           ForceSetPasswordReason.AdminForcePasswordReset,
