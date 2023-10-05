@@ -55,7 +55,7 @@ const routes: Routes = [
             path: "export",
             loadChildren: () =>
               import("../tools/vault-export/org-export.module").then(
-                (m) => m.OrganizationExportModule
+                (m) => m.OrganizationVaultExportModule
               ),
           },
         ],

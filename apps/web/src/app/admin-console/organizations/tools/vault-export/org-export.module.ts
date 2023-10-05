@@ -2,11 +2,11 @@ import { NgModule } from "@angular/core";
 
 import { LooseComponentsModule, SharedModule } from "../../../../shared";
 
-import { OrganizationExportRoutingModule } from "./org-export-routing.module";
-import { OrganizationExportComponent } from "./org-export.component";
+import { OrganizationVaultExportRoutingModule } from "./org-export-routing.module";
+import { OrganizationVaultExportComponent } from "./org-export.component";
 
 @NgModule({
-  imports: [SharedModule, LooseComponentsModule, OrganizationExportRoutingModule],
-  declarations: [OrganizationExportComponent],
+  imports: [SharedModule, LooseComponentsModule, OrganizationVaultExportRoutingModule],
+  declarations: [OrganizationVaultExportComponent],
 })
-export class OrganizationExportModule {}
+export class OrganizationVaultExportModule {}

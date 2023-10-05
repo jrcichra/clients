@@ -5,12 +5,12 @@ import { Organization } from "@bitwarden/common/admin-console/models/domain/orga
 
 import { OrganizationPermissionsGuard } from "../../guards/org-permissions.guard";
 
-import { OrganizationExportComponent } from "./org-export.component";
+import { OrganizationVaultExportComponent } from "./org-export.component";
 
 const routes: Routes = [
   {
     path: "",
-    component: OrganizationExportComponent,
+    component: OrganizationVaultExportComponent,
     canActivate: [OrganizationPermissionsGuard],
     data: {
       titleId: "exportVault",
@@ -22,4 +22,4 @@ const routes: Routes = [
 @NgModule({
   imports: [RouterModule.forChild(routes)],
 })
-export class OrganizationExportRoutingModule {}
+export class OrganizationVaultExportRoutingModule {}

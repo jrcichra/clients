@@ -21,7 +21,7 @@ import { ExportComponent } from "../../../../tools/vault-export/export.component
   templateUrl: "../../../../tools/vault-export/export.component.html",
 })
 // eslint-disable-next-line rxjs-angular/prefer-takeuntil
-export class OrganizationExportComponent extends ExportComponent {
+export class OrganizationVaultExportComponent extends ExportComponent {
   constructor(
     cryptoService: CryptoService,
     i18nService: I18nService,
