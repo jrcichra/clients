@@ -44,14 +44,21 @@ const routes: Routes = [
         },
       },
       {
-        path: "tools/import",
-        loadChildren: () =>
-          import("../tools/import/org-import.module").then((m) => m.OrganizationImportModule),
-      },
-      {
-        path: "tools/export",
-        loadChildren: () =>
-          import("../tools/vault-export/org-export.module").then((m) => m.OrganizationExportModule),
+        path: "tools",
+        children: [
+          {
+            path: "import",
+            loadChildren: () =>
+              import("../tools/import/org-import.module").then((m) => m.OrganizationImportModule),
+          },
+          {
+            path: "export",
+            loadChildren: () =>
+              import("../tools/vault-export/org-export.module").then(
+                (m) => m.OrganizationExportModule
+              ),
+          },
+        ],
       },
     ],
   },

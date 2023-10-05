@@ -9,7 +9,7 @@ import { OrganizationExportComponent } from "./org-export.component";
 
 const routes: Routes = [
   {
-    path: "export",
+    path: "",
     component: OrganizationExportComponent,
     canActivate: [OrganizationPermissionsGuard],
     data: {

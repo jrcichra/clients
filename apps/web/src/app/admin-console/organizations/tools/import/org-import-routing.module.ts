@@ -9,7 +9,7 @@ import { OrganizationImportComponent } from "./org-import.component";
 
 const routes: Routes = [
   {
-    path: "import",
+    path: "",
     component: OrganizationImportComponent,
     canActivate: [OrganizationPermissionsGuard],
     data: {
