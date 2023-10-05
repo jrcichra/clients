@@ -89,13 +89,16 @@ export default class TabsBackground {
       return;
     }
 
+    await this.overlayBackground.updateOverlayCiphers();
+
     if (this.main.onUpdatedRan) {
       return;
     }
     this.main.onUpdatedRan = true;
 
     await this.notificationBackground.checkNotificationQueue(tab);
-    await this.updateCurrentTabData();
+    await this.main.refreshBadge();
+    await this.main.refreshMenu();
     this.main.messagingService.send("tabChanged");
   };
 
