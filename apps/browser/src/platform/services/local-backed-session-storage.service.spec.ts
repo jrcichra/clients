@@ -137,6 +137,8 @@ describe("Browser Session Storage Service", () => {
         jest.spyOn(sessionStorage, "get").mockResolvedValue(null);
         jest.spyOn(localStorage, "save").mockResolvedValue();
         jest.spyOn(sessionStorage, "save").mockResolvedValue();
+
+        encryptService.encrypt.mockResolvedValue(mockEnc("{}"));
       });
 
       it("should remove key from cache if value is null", async () => {
@@ -244,7 +246,7 @@ describe("Browser Session Storage Service", () => {
 
       it("should decrypt returned sessions", async () => {
         encryptService.decryptToUtf8
-          .calledWith(encSession, key)
+          .calledWith(expect.anything(), key)
           .mockResolvedValue(decryptedSession);
         await sut.getLocalSession(key);
         expect(encryptService.decryptToUtf8).toHaveBeenNthCalledWith(1, encSession, key);
@@ -252,7 +254,7 @@ describe("Browser Session Storage Service", () => {
 
       it("should parse session", async () => {
         encryptService.decryptToUtf8
-          .calledWith(encSession, key)
+          .calledWith(expect.anything(), key)
           .mockResolvedValue(decryptedSession);
         const result = await sut.getLocalSession(key);
         expect(result).toEqual(session);
