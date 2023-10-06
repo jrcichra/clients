@@ -183,7 +183,10 @@ export class ApiService implements ApiServiceAbstraction {
     this.isDesktopClient =
       this.device === DeviceType.WindowsDesktop ||
       this.device === DeviceType.MacOsDesktop ||
-      this.device === DeviceType.LinuxDesktop;
+      this.device === DeviceType.LinuxDesktop ||
+      this.device === DeviceType.WindowsCLI ||
+      this.device === DeviceType.MacOsCLI ||
+      this.device === DeviceType.LinuxCLI;
   }
 
   // Auth APIs
