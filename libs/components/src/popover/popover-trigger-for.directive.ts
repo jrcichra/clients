@@ -1,6 +1,7 @@
 import { Overlay, OverlayConfig, OverlayRef } from "@angular/cdk/overlay";
 import { TemplatePortal } from "@angular/cdk/portal";
 import {
+  AfterViewInit,
   Directive,
   ElementRef,
   HostBinding,
@@ -19,9 +20,10 @@ import { PopoverComponent } from "./popover.component";
   standalone: true,
   exportAs: "popoverTrigger",
 })
-export class PopoverTriggerForDirective implements OnDestroy {
+export class PopoverTriggerForDirective implements OnDestroy, AfterViewInit {
+  @Input()
   @HostBinding("attr.aria-expanded")
-  isOpen = false;
+  popoverOpen = false;
 
   @Input("bitPopoverTriggerFor")
   popover: PopoverComponent;
@@ -68,13 +70,27 @@ export class PopoverTriggerForDirective implements OnDestroy {
   ) {}
 
   @HostListener("click")
+  togglePopover() {
+    if (this.popoverOpen) {
+      this.closePopover();
+    } else {
+      this.openPopover();
+    }
+  }
+
+  ngAfterViewInit() {
+    if (this.popoverOpen) {
+      this.openPopover();
+    }
+  }
+
   openPopover() {
-    this.isOpen = true;
+    this.popoverOpen = true;
     this.overlayRef = this.overlay.create(this.defaultPopoverConfig);
 
     const templatePortal = new TemplatePortal(this.popover.templateRef, this.viewContainerRef);
-    this.overlayRef.attach(templatePortal);
 
+    this.overlayRef.attach(templatePortal);
     this.closedEventsSub = this.getClosedEvents().subscribe(() => {
       this.destroyPopover();
     });
@@ -96,11 +112,11 @@ export class PopoverTriggerForDirective implements OnDestroy {
   }
 
   private destroyPopover() {
-    if (this.overlayRef == null || !this.isOpen) {
+    if (this.overlayRef == null || !this.popoverOpen) {
       return;
     }
 
-    this.isOpen = false;
+    this.popoverOpen = false;
     this.disposeAll();
   }
 
@@ -109,7 +125,7 @@ export class PopoverTriggerForDirective implements OnDestroy {
     this.overlayRef?.dispose();
   }
 
-  close() {
+  closePopover() {
     this.destroyPopover();
   }
 }

@@ -67,7 +67,7 @@ const popoverContent = `
       <li>Esse labore veniam tempora</li>
       <li>Adipisicing elit ipsum <a href="#">iustolaborum</a></li>
     </ul>
-    <button bitButton class="tw-mt-3" (click)="triggerRef.close()">Close</button>
+    <button bitButton class="tw-mt-3" (click)="triggerRef.closePopover()">Close</button>
   </bit-popover>
 `;
 
@@ -108,6 +108,26 @@ export const Open: Story = {
           <ng-container *ngTemplateOutlet="myPopover.templateRef"></ng-container>
         </div>
       </div>
+      `,
+  }),
+};
+
+export const InitiallyOpen: Story = {
+  render: (args) => ({
+    props: args,
+    template: `
+      <div class="tw-mt-32">
+        <button
+          type="button"
+          class="tw-border-none tw-bg-transparent tw-text-primary-500"
+          [bitPopoverTriggerFor]="myPopover"
+          [popoverOpen]="true"
+          #triggerRef="popoverTrigger"
+        >
+          <i class="bwi bwi-question-circle"></i>
+        </button>
+      </div>
+      ${popoverContent}
       `,
   }),
 };
