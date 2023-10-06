@@ -23,8 +23,8 @@ export interface DefaultPosition extends ConnectedPosition {
 
 export const defaultPositions: DefaultPosition[] = [
   /**
-   * The order of these positions matters. The first position will take precedence
-   * over the second (assuming it fits in the viewport), and so forth.
+   * The order of these positions matters. The Popover component will use
+   * the first position that fits within the viewport.
    */
 
   // Popover opens to right of trigger
