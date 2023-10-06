@@ -78,13 +78,7 @@ export class PopoverTriggerForDirective implements OnDestroy, AfterViewInit {
     }
   }
 
-  ngAfterViewInit() {
-    if (this.popoverOpen) {
-      this.openPopover();
-    }
-  }
-
-  openPopover() {
+  private openPopover() {
     this.popoverOpen = true;
     this.overlayRef = this.overlay.create(this.defaultPopoverConfig);
 
@@ -94,10 +88,6 @@ export class PopoverTriggerForDirective implements OnDestroy, AfterViewInit {
     this.closedEventsSub = this.getClosedEvents().subscribe(() => {
       this.destroyPopover();
     });
-  }
-
-  ngOnDestroy() {
-    this.disposeAll();
   }
 
   private getClosedEvents(): Observable<any> {
@@ -123,6 +113,16 @@ export class PopoverTriggerForDirective implements OnDestroy, AfterViewInit {
   private disposeAll() {
     this.closedEventsSub?.unsubscribe();
     this.overlayRef?.dispose();
+  }
+
+  ngAfterViewInit() {
+    if (this.popoverOpen) {
+      this.openPopover();
+    }
+  }
+
+  ngOnDestroy() {
+    this.disposeAll();
   }
 
   closePopover() {
