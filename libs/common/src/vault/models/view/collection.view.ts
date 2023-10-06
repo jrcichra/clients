@@ -48,6 +48,6 @@ export class CollectionView implements View, ITreeNodeObject {
         "Id of the organization provided does not match the org id of the collection."
       );
     }
-    return org?.canDeleteAnyCollection || org?.canDeleteAssignedCollections;
+    return org?.canDeleteAnyCollection || (!org?.limitCollectionCreationDeletion && this.manage);
   }
 }

@@ -36,6 +36,6 @@ export class CollectionAdminView extends CollectionView {
   }
 
   override canDelete(org: Organization): boolean {
-    return org?.canDeleteAnyCollection || (org?.canDeleteAssignedCollections && this.assigned);
+    return org?.canDeleteAnyCollection || (!org?.limitCollectionCreationDeletion && this.manage);
   }
 }
