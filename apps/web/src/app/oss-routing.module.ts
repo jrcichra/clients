@@ -47,6 +47,7 @@ import { PreferencesComponent } from "./settings/preferences.component";
 import { SecurityRoutingModule } from "./settings/security-routing.module";
 import { SettingsComponent } from "./settings/settings.component";
 import { GeneratorComponent } from "./tools/generator.component";
+import { ImportWebComponent } from "./tools/import/import-web.component";
 import { AccessComponent } from "./tools/send/access.component";
 import { SendComponent } from "./tools/send/send.component";
 import { ToolsComponent } from "./tools/tools.component";
@@ -253,7 +254,10 @@ const routes: Routes = [
           { path: "", pathMatch: "full", redirectTo: "generator" },
           {
             path: "import",
-            loadChildren: () => import("./tools/import/import.module").then((m) => m.ImportModule),
+            component: ImportWebComponent,
+            data: {
+              titleId: "importData",
+            },
           },
           {
             path: "export",
