@@ -1,11 +1,22 @@
 <bit-dialog #dialog>
   <span bitDialogTitle>{{ "importData" | i18n }}</span>
   <ng-container bitDialogContent>
-    <app-import (formLoading)="this.loading = $event" (formDisabled)="this.disabled = $event"></app-import>
+    <app-import
+      (formLoading)="this.loading = $event"
+      (formDisabled)="this.disabled = $event"
+      (onSuccessfulImport)="this.onSuccessfulImport($event)"
+    ></app-import>
   </ng-container>
   <ng-container bitDialogFooter>
-    <button [disabled]="disabled" [loading]="loading" form="importForm" bitButton type="submit" bitFormButton
-      buttonType="primary">
+    <button
+      [disabled]="disabled"
+      [loading]="loading"
+      form="importForm"
+      bitButton
+      type="submit"
+      bitFormButton
+      buttonType="primary"
+    >
       {{ "importData" | i18n }}
     </button>
     <button type="button" bitButton bitFormButton buttonType="secondary" bitDialogClose>

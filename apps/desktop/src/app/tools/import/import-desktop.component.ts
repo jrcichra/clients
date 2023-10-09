@@ -1,3 +1,4 @@
+import { DialogRef } from "@angular/cdk/dialog";
 import { CommonModule } from "@angular/common";
 import { Component } from "@angular/core";
 
@@ -21,4 +22,13 @@ import { ImportComponent } from "@bitwarden/importer";
 export class ImportDesktopComponent {
   protected disabled = false;
   protected loading = false;
+
+  constructor(public dialogRef: DialogRef) {}
+
+  /**
+   * Callback that is called after a successful import.
+   */
+  protected async onSuccessfulImport(organizationId: string): Promise<void> {
+    this.dialogRef.close();
+  }
 }
