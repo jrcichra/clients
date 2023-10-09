@@ -54,8 +54,7 @@ const routes: Routes = [
             data: {
               titleId: "importData",
               organizationPermissions: (org: Organization) => org.canAccessImportExport,
-
-            }
+            },
           },
           {
             path: "export",
