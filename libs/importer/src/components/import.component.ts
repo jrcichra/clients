@@ -43,15 +43,14 @@ import {
   IconButtonModule,
   SelectModule,
 } from "@bitwarden/components";
+
+import { ImportOption, ImportResult, ImportType } from "../models";
 import {
-  ImportOption,
-  ImportResult,
-  ImportServiceAbstraction,
-  ImportType,
-  ImportApiServiceAbstraction,
   ImportApiService,
+  ImportApiServiceAbstraction,
   ImportService,
-} from "@bitwarden/importer";
+  ImportServiceAbstraction,
+} from "../services";
 
 import {
   FilePasswordPromptComponent,

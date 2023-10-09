@@ -155,7 +155,7 @@ import {
   ImportApiServiceAbstraction,
   ImportService,
   ImportServiceAbstraction,
-} from "@bitwarden/importer";
+} from "@bitwarden/importer/core";
 
 import { AuthGuard } from "../auth/guards/auth.guard";
 import { UnauthGuard } from "../auth/guards/unauth.guard";
