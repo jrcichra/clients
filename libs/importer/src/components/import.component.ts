@@ -1,10 +1,10 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnDestroy, OnInit, ViewChild } from "@angular/core";
+import { Component, Input, OnDestroy, OnInit, ViewChild } from "@angular/core";
 import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
-import { ActivatedRoute, Router } from "@angular/router";
+import { Router } from "@angular/router";
 import * as JSZip from "jszip";
 import { concat, Observable, Subject, lastValueFrom, combineLatest } from "rxjs";
-import { map, switchMap, takeUntil } from "rxjs/operators";
+import { map, takeUntil } from "rxjs/operators";
 
 import { JslibModule } from "@bitwarden/angular/jslib.module";
 import { ApiService } from "@bitwarden/common/abstractions/api.service";
@@ -95,7 +95,23 @@ export class ImportComponent implements OnInit, OnDestroy {
   collections$: Observable<CollectionView[]>;
   organizations$: Observable<Organization[]>;
 
-  protected organizationId: string = null;
+  private _organizationId: string;
+
+  get organizationId(): string {
+    return this._organizationId;
+  }
+
+  @Input() set organizationId(value: string) {
+    this._organizationId = value;
+    this.organizationService
+      .get$(this._organizationId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((organization) => {
+        this._organizationId = organization?.id;
+        this.organization = organization;
+      });
+  }
+
   protected organization: Organization;
   protected destroy$ = new Subject<void>();
 
@@ -130,8 +146,7 @@ export class ImportComponent implements OnInit, OnDestroy {
     protected folderService: FolderService,
     protected collectionService: CollectionService,
     protected organizationService: OrganizationService,
-    protected formBuilder: FormBuilder,
-    private route: ActivatedRoute
+    protected formBuilder: FormBuilder
   ) {}
 
   protected get importBlockedByPolicy(): boolean {
@@ -154,17 +169,6 @@ export class ImportComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    //
-    this.route.params
-      .pipe(
-        switchMap((params) => this.organizationService.get$(params.organizationId)),
-        takeUntil(this.destroy$)
-      )
-      .subscribe((organization) => {
-        this.organizationId = organization?.id;
-        this.organization = organization;
-      });
-
     this.setImportOptions();
 
     this.organizations$ = concat(

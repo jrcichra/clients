@@ -1,5 +1,5 @@
 <h1 bitTypography="h1">{{ "importData" | i18n }}</h1>
-<app-import #import></app-import>
+<app-import #import organizationId="{{ routeOrgId }}"></app-import>
 <button
   *ngIf="import.bitSubmit"
   [disabled]="import.bitSubmit.disabled$ | async"

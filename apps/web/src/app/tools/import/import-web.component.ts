@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
-import { RouterModule } from "@angular/router";
+import { ActivatedRoute, RouterModule } from "@angular/router";
 
 import { JslibModule } from "@bitwarden/angular/jslib.module";
 import { AsyncActionsModule, ButtonModule } from "@bitwarden/components";
@@ -21,4 +21,12 @@ import { ImportComponent } from "@bitwarden/importer";
     ImportComponent,
   ],
 })
-export class ImportWebComponent {}
+export class ImportWebComponent implements OnInit {
+  protected routeOrgId: string = null;
+
+  constructor(private route: ActivatedRoute) {}
+
+  ngOnInit(): void {
+    this.routeOrgId = this.route.snapshot.paramMap.get("organizationId");
+  }
+}
