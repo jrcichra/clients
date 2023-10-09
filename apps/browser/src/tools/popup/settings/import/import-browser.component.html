@@ -19,5 +19,6 @@
   <app-import
     (formDisabled)="this.disabled = $event"
     (formLoading)="this.loading = $event"
+    (onSuccessfulImport)="this.onSuccessfulImport($event)"
   ></app-import>
 </div>
