@@ -1,5 +1,13 @@
 import { CommonModule } from "@angular/common";
-import { Component, Input, OnDestroy, OnInit, ViewChild } from "@angular/core";
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewChild,
+} from "@angular/core";
 import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
 import * as JSZip from "jszip";
@@ -132,7 +140,23 @@ export class ImportComponent implements OnInit, OnDestroy {
   });
 
   @ViewChild(BitSubmitDirective)
-  bitSubmit: BitSubmitDirective;
+  private bitSubmit: BitSubmitDirective;
+
+  @Output()
+  formLoading = new EventEmitter<boolean>();
+
+  @Output()
+  formDisabled = new EventEmitter<boolean>();
+
+  ngAfterViewInit(): void {
+    this.bitSubmit.loading$.pipe(takeUntil(this.destroy$)).subscribe((loading) => {
+      this.formLoading.emit(loading);
+    });
+
+    this.bitSubmit.disabled$.pipe(takeUntil(this.destroy$)).subscribe((disabled) => {
+      this.formDisabled.emit(disabled);
+    });
+  }
 
   constructor(
     protected i18nService: I18nService,

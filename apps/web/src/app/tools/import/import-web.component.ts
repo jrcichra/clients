@@ -23,6 +23,8 @@ import { ImportComponent } from "@bitwarden/importer";
 })
 export class ImportWebComponent implements OnInit {
   protected routeOrgId: string = null;
+  protected loading = false;
+  protected disabled = false;
 
   constructor(private route: ActivatedRoute) {}
 
