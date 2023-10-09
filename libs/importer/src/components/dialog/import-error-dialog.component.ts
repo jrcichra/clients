@@ -11,7 +11,6 @@ export interface ErrorListItem {
 }
 
 @Component({
-  selector: "app-import-error-dialog",
   templateUrl: "./import-error-dialog.component.html",
   standalone: true,
   imports: [CommonModule, JslibModule, DialogModule, TableModule, ButtonModule],
