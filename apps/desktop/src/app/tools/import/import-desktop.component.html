@@ -1,13 +1,15 @@
-<bit-dialog>
+<bit-dialog #dialog>
   <span bitDialogTitle>{{ "importData" | i18n }}</span>
   <ng-container bitDialogContent>
-    <app-import #import></app-import>
+    <app-import
+      (formLoading)="this.loading = $event"
+      (formDisabled)="this.disabled = $event"
+    ></app-import>
   </ng-container>
   <ng-container bitDialogFooter>
     <button
-      *ngIf="import.bitSubmit"
-      [disabled]="import.bitSubmit.disabled$ | async"
-      [loading]="import.bitSubmit.loading$ | async"
+      [disabled]="disabled"
+      [loading]="loading"
       form="importForm"
       bitButton
       type="submit"

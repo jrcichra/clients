@@ -18,4 +18,7 @@ import { ImportComponent } from "@bitwarden/importer";
     ImportComponent,
   ],
 })
-export class ImportDesktopComponent {}
+export class ImportDesktopComponent {
+  protected disabled = false;
+  protected loading = false;
+}
