@@ -9,7 +9,6 @@ import {
   ViewChild,
 } from "@angular/core";
 import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
-import { Router } from "@angular/router";
 import * as JSZip from "jszip";
 import { concat, Observable, Subject, lastValueFrom, combineLatest } from "rxjs";
 import { map, takeUntil } from "rxjs/operators";
@@ -18,7 +17,6 @@ import { JslibModule } from "@bitwarden/angular/jslib.module";
 import { ApiService } from "@bitwarden/common/abstractions/api.service";
 import {
   canAccessImportExport,
-  canAccessVaultTab,
   OrganizationService,
 } from "@bitwarden/common/admin-console/abstractions/organization/organization.service.abstraction";
 import { PolicyService } from "@bitwarden/common/admin-console/abstractions/policy/policy.service.abstraction";
@@ -148,6 +146,9 @@ export class ImportComponent implements OnInit, OnDestroy {
   @Output()
   formDisabled = new EventEmitter<boolean>();
 
+  @Output()
+  onSuccessfulImport = new EventEmitter<string>();
+
   ngAfterViewInit(): void {
     this.bitSubmit.loading$.pipe(takeUntil(this.destroy$)).subscribe((loading) => {
       this.formLoading.emit(loading);
@@ -161,7 +162,6 @@ export class ImportComponent implements OnInit, OnDestroy {
   constructor(
     protected i18nService: I18nService,
     protected importService: ImportServiceAbstraction,
-    protected router: Router,
     protected platformUtilsService: PlatformUtilsService,
     protected policyService: PolicyService,
     private logService: LogService,
@@ -175,21 +175,6 @@ export class ImportComponent implements OnInit, OnDestroy {
 
   protected get importBlockedByPolicy(): boolean {
     return this._importBlockedByPolicy;
-  }
-
-  /**
-   * Callback that is called after a successful import.
-   */
-  protected async onSuccessfulImport(): Promise<void> {
-    if (this.organization) {
-      if (canAccessVaultTab(this.organization)) {
-        await this.router.navigate(["organizations", this.organizationId, "vault"]);
-      } else {
-        this.fileSelected = null;
-      }
-    } else {
-      await this.router.navigate(["vault"]);
-    }
   }
 
   ngOnInit() {
@@ -356,7 +341,7 @@ export class ImportComponent implements OnInit, OnDestroy {
       });
 
       this.syncService.fullSync(true);
-      await this.onSuccessfulImport();
+      this.onSuccessfulImport.emit(this._organizationId);
     } catch (e) {
       this.dialogService.open<unknown, Error>(ImportErrorDialogComponent, {
         data: e,

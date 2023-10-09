@@ -4,6 +4,7 @@
     <app-import
       (formLoading)="this.loading = $event"
       (formDisabled)="this.disabled = $event"
+      (onSuccessfulImport)="this.onSuccessfulImport($event)"
     ></app-import>
   </ng-container>
   <ng-container bitDialogFooter>
@@ -18,9 +19,6 @@
     >
       {{ "importData" | i18n }}
     </button>
-    <!-- <button type="submit" bitButton bitFormButton buttonType="primary" [disabled]="importBlockedByPolicy">
-          {{ "importData" | i18n }}        
-        </button> -->
     <button type="button" bitButton bitFormButton buttonType="secondary" bitDialogClose>
       {{ "cancel" | i18n }}
     </button>
