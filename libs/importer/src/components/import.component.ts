@@ -57,7 +57,7 @@ import {
 } from "@bitwarden/importer";
 
 @Component({
-  selector: "app-import",
+  selector: "tools-import",
   templateUrl: "import.component.html",
   standalone: true,
   imports: [
