@@ -48,13 +48,16 @@ import {
   ImportResult,
   ImportServiceAbstraction,
   ImportType,
-  FilePasswordPromptComponent,
-  ImportErrorDialogComponent,
-  ImportSuccessDialogComponent,
   ImportApiServiceAbstraction,
   ImportApiService,
   ImportService,
 } from "@bitwarden/importer";
+
+import {
+  FilePasswordPromptComponent,
+  ImportErrorDialogComponent,
+  ImportSuccessDialogComponent,
+} from "./dialog";
 
 @Component({
   selector: "tools-import",

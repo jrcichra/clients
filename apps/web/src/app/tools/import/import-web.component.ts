@@ -10,7 +10,7 @@ import {
   canAccessVaultTab,
 } from "@bitwarden/common/admin-console/abstractions/organization/organization.service.abstraction";
 import { AsyncActionsModule, ButtonModule } from "@bitwarden/components";
-import { ImportComponent } from "@bitwarden/importer";
+import { ImportComponent } from "@bitwarden/importer/ui";
 
 @Component({
   templateUrl: "import-web.component.html",
