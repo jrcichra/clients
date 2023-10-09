@@ -20,4 +20,7 @@ import { ImportComponent } from "@bitwarden/importer";
     ImportComponent,
   ],
 })
-export class ImportBrowserComponent {}
+export class ImportBrowserComponent {
+  protected disabled = false;
+  protected loading = false;
+}
