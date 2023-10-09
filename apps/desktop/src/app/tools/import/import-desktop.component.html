@@ -1,11 +1,11 @@
 <bit-dialog #dialog>
   <span bitDialogTitle>{{ "importData" | i18n }}</span>
   <ng-container bitDialogContent>
-    <app-import
+    <tools-import
       (formLoading)="this.loading = $event"
       (formDisabled)="this.disabled = $event"
       (onSuccessfulImport)="this.onSuccessfulImport($event)"
-    ></app-import>
+    ></tools-import>
   </ng-container>
   <ng-container bitDialogFooter>
     <button

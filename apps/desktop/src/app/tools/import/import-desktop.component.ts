@@ -7,7 +7,6 @@ import { AsyncActionsModule, ButtonModule, DialogModule } from "@bitwarden/compo
 import { ImportComponent } from "@bitwarden/importer";
 
 @Component({
-  selector: "app-import-desktop",
   templateUrl: "import-desktop.component.html",
   standalone: true,
   imports: [
