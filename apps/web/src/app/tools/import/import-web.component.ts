@@ -13,7 +13,6 @@ import { AsyncActionsModule, ButtonModule } from "@bitwarden/components";
 import { ImportComponent } from "@bitwarden/importer";
 
 @Component({
-  selector: "app-import-web",
   templateUrl: "import-web.component.html",
   standalone: true,
   imports: [
