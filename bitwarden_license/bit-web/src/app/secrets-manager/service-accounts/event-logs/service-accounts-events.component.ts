@@ -42,8 +42,8 @@ export class ServiceAccountEventsComponent extends BaseEventsComponent implement
   }
 
   async ngOnInit() {
-    // eslint-disable-next-line rxjs-angular/prefer-takeuntil, rxjs/no-async-subscribe
-    this.route.parent.params.subscribe(async (params) => {
+    // eslint-disable-next-line rxjs/no-async-subscribe
+    this.route.params.pipe(takeUntil(this.destroy$)).subscribe(async (params) => {
       this.serviceAccountId = params.serviceAccountId;
       await this.load();
     });
