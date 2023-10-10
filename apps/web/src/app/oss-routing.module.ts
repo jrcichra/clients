@@ -11,7 +11,6 @@ import {
 import { canAccessFeature } from "@bitwarden/angular/guard/feature-flag.guard";
 import { FeatureFlag } from "@bitwarden/common/enums/feature-flag.enum";
 
-import { SubscriptionRoutingModule } from "../app/billing/settings/subscription-routing.module";
 import { flagEnabled, Flags } from "../utils/flags";
 
 import { AcceptFamilySponsorshipComponent } from "./admin-console/organizations/sponsorships/accept-family-sponsorship.component";
@@ -47,7 +46,6 @@ import { PreferencesComponent } from "./settings/preferences.component";
 import { SecurityRoutingModule } from "./settings/security-routing.module";
 import { SettingsComponent } from "./settings/settings.component";
 import { GeneratorComponent } from "./tools/generator.component";
-import { ImportWebComponent } from "./tools/import/import-web.component";
 import { AccessComponent } from "./tools/send/access.component";
 import { SendComponent } from "./tools/send/send.component";
 import { ToolsComponent } from "./tools/tools.component";
@@ -222,7 +220,10 @@ const routes: Routes = [
           },
           {
             path: "subscription",
-            loadChildren: () => SubscriptionRoutingModule,
+            loadChildren: () =>
+              import("./billing/individual/individual-billing.module").then(
+                (m) => m.IndividualBillingModule
+              ),
           },
           {
             path: "emergency-access",
@@ -254,7 +255,8 @@ const routes: Routes = [
           { path: "", pathMatch: "full", redirectTo: "generator" },
           {
             path: "import",
-            component: ImportWebComponent,
+            loadComponent: () =>
+              import("./tools/import/import-web.component").then((mod) => mod.ImportWebComponent),
             data: {
               titleId: "importData",
             },
