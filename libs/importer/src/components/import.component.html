@@ -355,10 +355,7 @@
     </ng-container>
   </bit-callout>
   <import-lastpass
-    *ngIf="
-      format === 'lastpasscsv' && formGroup.controls.lastPassType.value === 'direct';
-      else defaultImport
-    "
+    *ngIf="showLastPassOptions; else defaultImport"
     [formGroup]="formGroup"
   ></import-lastpass>
   <ng-template #defaultImport>

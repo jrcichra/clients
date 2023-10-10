@@ -184,6 +184,11 @@ export class ImportComponent implements OnInit, OnDestroy {
     return this._importBlockedByPolicy;
   }
 
+  /** TODO: only show on desktop & web */
+  protected get showLastPassOptions(): boolean {
+    return this.format === "lastpasscsv" && this.formGroup.controls.lastPassType.value === "direct";
+  }
+
   ngOnInit() {
     this.setImportOptions();
 
