@@ -5,7 +5,8 @@ import { Component, Inject, OnInit } from "@angular/core";
 import { JslibModule } from "@bitwarden/angular/jslib.module";
 import { CipherType } from "@bitwarden/common/vault/enums/cipher-type";
 import { ButtonModule, DialogModule, TableDataSource, TableModule } from "@bitwarden/components";
-import { ImportResult } from "@bitwarden/importer";
+
+import { ImportResult } from "../../models";
 
 export interface ResultList {
   icon: string;

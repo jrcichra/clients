@@ -43,18 +43,20 @@ import {
   IconButtonModule,
   SelectModule,
 } from "@bitwarden/components";
+
+import { ImportOption, ImportResult, ImportType } from "../models";
 import {
-  ImportOption,
-  ImportResult,
+  ImportApiService,
+  ImportApiServiceAbstraction,
+  ImportService,
   ImportServiceAbstraction,
-  ImportType,
+} from "../services";
+
+import {
   FilePasswordPromptComponent,
   ImportErrorDialogComponent,
   ImportSuccessDialogComponent,
-  ImportApiServiceAbstraction,
-  ImportApiService,
-  ImportService,
-} from "@bitwarden/importer";
+} from "./dialog";
 
 @Component({
   selector: "tools-import",
