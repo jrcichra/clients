@@ -21,5 +21,13 @@
       [(toggled)]="showPassword"
     ></button>
   </bit-form-field>
-  Include shared folders
+  <bit-form-control>
+    <input
+      bitCheckbox
+      type="checkbox"
+      formControlName="includeSharedFolders"
+      id="includeSharedFolders"
+    />
+    <bit-label>Include shared folders</bit-label>
+  </bit-form-control>
 </form>
