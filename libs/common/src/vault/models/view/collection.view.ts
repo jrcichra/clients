@@ -1,6 +1,11 @@
+// eslint-disable-next-line import/no-restricted-paths -- Temporary inject usage until feature flag is enabled
+import { inject } from "@angular/core";
+
 import { Organization } from "../../../admin-console/models/domain/organization";
+import { FeatureFlag } from "../../../enums/feature-flag.enum";
 import { ITreeNodeObject } from "../../../models/domain/tree-node";
 import { View } from "../../../models/view/view";
+import { ConfigServiceAbstraction } from "../../../platform/abstractions/config/config.service.abstraction";
 import { Collection } from "../domain/collection";
 import { CollectionAccessDetailsResponse } from "../response/collection.response";
 
@@ -42,12 +47,18 @@ export class CollectionView implements View, ITreeNodeObject {
   }
 
   // For deleting a collection, not the items within it.
-  canDelete(org: Organization): boolean {
+  async canDelete(org: Organization): Promise<boolean> {
     if (org.id !== this.organizationId) {
       throw new Error(
         "Id of the organization provided does not match the org id of the collection."
       );
     }
-    return org?.canDeleteAnyCollection || (!org?.limitCollectionCreationDeletion && this.manage);
+
+    const configService = inject(ConfigServiceAbstraction);
+    if (await configService.getFeatureFlag(FeatureFlag.FlexibleCollections)) {
+      return org?.canDeleteAnyCollection || (!org?.limitCollectionCreationDeletion && this.manage);
+    } else {
+      return org?.canDeleteAnyCollection || org?.canDeleteAssignedCollections;
+    }
   }
 }

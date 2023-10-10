@@ -35,7 +35,8 @@ export class CollectionAdminView extends CollectionView {
     return org?.canEditAnyCollection || (org?.canEditAssignedCollections && this.assigned);
   }
 
-  override canDelete(org: Organization): boolean {
-    return org?.canDeleteAnyCollection || (!org?.limitCollectionCreationDeletion && this.manage);
+  override async canDelete(org: Organization): Promise<boolean> {
+    // Leaving this check as-is. Flexible collections will make use of the first half of this conditional once enabled
+    return org?.canDeleteAnyCollection || (org?.canDeleteAssignedCollections && this.assigned);
   }
 }
