@@ -41,6 +41,7 @@ import {
   DialogService,
   FormFieldModule,
   IconButtonModule,
+  RadioButtonModule,
   SelectModule,
 } from "@bitwarden/components";
 
@@ -57,6 +58,7 @@ import {
   ImportErrorDialogComponent,
   ImportSuccessDialogComponent,
 } from "./dialog";
+import { ImportLastPassComponent } from "./import-lastpass.component";
 
 @Component({
   selector: "tools-import",
@@ -72,6 +74,8 @@ import {
     SelectModule,
     CalloutModule,
     ReactiveFormsModule,
+    ImportLastPassComponent,
+    RadioButtonModule,
   ],
   providers: [
     {
@@ -137,6 +141,7 @@ export class ImportComponent implements OnInit, OnDestroy {
     format: [null as ImportType | null, [Validators.required]],
     fileContents: [],
     file: [],
+    lastPassType: ["direct" as "csv" | "direct"],
   });
 
   @ViewChild(BitSubmitDirective)
