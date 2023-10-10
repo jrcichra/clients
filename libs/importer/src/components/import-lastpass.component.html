@@ -4,8 +4,8 @@
     <input bitInput type="text" formControlName="email" />
     <bit-hint>{{ emailHint$ | async }}</bit-hint>
   </bit-form-field>
-  <bit-form-field *ngIf="!isFedereatedSSO">
-    <bit-label> LastPass master password </bit-label>
+  <bit-form-field *ngIf="!(isFederatedSSO$ | async)">
+    <bit-label>LastPass master password</bit-label>
     <input
       bitInput
       type="password"

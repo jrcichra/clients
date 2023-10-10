@@ -355,10 +355,11 @@
     </ng-container>
   </bit-callout>
   <import-lastpass
-    *ngIf="showLastPassOptions; else defaultImport"
+    *ngIf="showLastPassOptions"
     [formGroup]="formGroup"
+    (csvDataLoaded)="this.formGroup.controls.fileContents.setValue($event)"
   ></import-lastpass>
-  <ng-template #defaultImport>
+  <div [hidden]="showLastPassOptions">
     <bit-form-field>
       <bit-label>{{ "selectImportFile" | i18n }}</bit-label>
       <div class="file-selector">
@@ -388,5 +389,5 @@
         formControlName="fileContents"
       ></textarea>
     </bit-form-field>
-  </ng-template>
+  </div>
 </form>

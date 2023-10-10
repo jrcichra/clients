@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnInit } from "@angular/core";
+import { Component, EventEmitter, OnDestroy, OnInit, Output } from "@angular/core";
 import {
   AbstractControl,
   AsyncValidatorFn,
@@ -10,7 +10,17 @@ import {
   ValidationErrors,
   Validators,
 } from "@angular/forms";
-import { debounceTime, delay, firstValueFrom, map, merge, of, switchMap } from "rxjs";
+import {
+  Subject,
+  debounceTime,
+  delay,
+  firstValueFrom,
+  map,
+  merge,
+  of,
+  switchMap,
+  takeUntil,
+} from "rxjs";
 
 import { JslibModule } from "@bitwarden/angular/jslib.module";
 import {
@@ -37,9 +47,8 @@ import {
     CheckboxModule,
   ],
 })
-export class ImportLastPassComponent implements OnInit {
-  /** TODO: always false */
-  protected isFedereatedSSO = false;
+export class ImportLastPassComponent implements OnInit, OnDestroy {
+  private _destroy$ = new Subject<void>();
 
   /** mask password input */
   protected showPassword = false;
@@ -75,11 +84,26 @@ export class ImportLastPassComponent implements OnInit {
     this.account$.pipe(map((account) => (account ? "Account found. Ready to import." : "")))
   );
 
+  /** TODO */
+  protected isFederatedSSO$ = this.account$.pipe(map((account) => false));
+
+  @Output() csvDataLoaded = new EventEmitter<string>();
+
   constructor(private formBuilder: FormBuilder, private controlContainer: ControlContainer) {}
 
   ngOnInit(): void {
     this._parentFormGroup = this.controlContainer.control as FormGroup;
     this._parentFormGroup.addControl("lastpassOptions", this.formGroup);
+
+    this.account$.pipe(takeUntil(this._destroy$)).subscribe((account) => {
+      const csvData = `foobar`;
+      this.csvDataLoaded.emit(csvData);
+    });
+  }
+
+  ngOnDestroy(): void {
+    this._destroy$.next();
+    this._destroy$.complete();
   }
 
   /**
@@ -89,6 +113,7 @@ export class ImportLastPassComponent implements OnInit {
    */
   private validateLastPassCredentials(): AsyncValidatorFn {
     return (_control: AbstractControl): Promise<ValidationErrors> => {
+      /** Dummy implementation */
       return Promise.resolve({
         badEmailOrPassword: {
           message: "Incorrect email or password",
@@ -122,6 +147,7 @@ export class ImportLastPassComponent implements OnInit {
    * @returns Returns the account data if it exists, otherwise returns `null`
    */
   private getAccountByEmail(email: string) {
+    /** Dummy implementation */
     return of(email).pipe(
       delay(500),
       map(() => {
