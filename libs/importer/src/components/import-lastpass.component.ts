@@ -12,17 +12,20 @@ import {
 } from "@angular/forms";
 import {
   Subject,
+  combineLatest,
   debounceTime,
-  delay,
+  filter,
   firstValueFrom,
   map,
   merge,
-  of,
+  shareReplay,
   switchMap,
   takeUntil,
 } from "rxjs";
 
 import { JslibModule } from "@bitwarden/angular/jslib.module";
+import { TokenService } from "@bitwarden/common/auth/abstractions/token.service";
+import { CryptoFunctionService } from "@bitwarden/common/platform/abstractions/crypto-function.service";
 import {
   CalloutModule,
   CheckboxModule,
@@ -30,6 +33,8 @@ import {
   IconButtonModule,
   TypographyModule,
 } from "@bitwarden/components";
+
+import { Vault } from "../importers/lastpass/access/vault";
 
 /** TODO: add I18n */
 @Component({
@@ -59,46 +64,60 @@ export class ImportLastPassComponent implements OnInit, OnDestroy {
       "",
       {
         validators: [Validators.required, Validators.email],
-        asyncValidators: [this.validateAccount()],
+        asyncValidators: [this.validateEmailField()],
+        updateOn: "change",
       },
     ],
     password: [
       "",
       {
         validators: [Validators.required],
-        asyncValidators: [this.validateLastPassCredentials()],
+        asyncValidators: [this.validatePasswordField()],
         updateOn: "submit",
       },
     ],
     includeSharedFolders: [],
   });
 
+  private vault: Vault;
+
+  private password$ = this.formGroup.controls.password.valueChanges;
   private email$ = this.formGroup.controls.email.valueChanges;
-  private account$ = this.email$.pipe(
-    /** TODO: I picked a random debounce time */
-    debounceTime(1500),
-    switchMap((email) => this.getAccountByEmail(email))
+  private userType$ = this.email$.pipe(
+    debounceTime(4000),
+    switchMap((email) => this.getUserTypeByEmail(email)),
+    shareReplay({ refCount: true, bufferSize: 1 })
   );
   protected emailHint$ = merge(
     this.email$.pipe(map((email) => (email ? "Finding your account..." : ""))),
-    this.account$.pipe(map((account) => (account ? "Account found. Ready to import." : "")))
+    this.userType$.pipe(map((account) => (account ? "Account found. Ready to import." : "")))
   );
-
-  /** TODO */
-  protected isFederatedSSO$ = this.account$.pipe(map((account) => false));
+  protected isFederatedSSO$ = this.userType$.pipe(map((userType) => userType?.isFederated()));
 
   @Output() csvDataLoaded = new EventEmitter<string>();
 
-  constructor(private formBuilder: FormBuilder, private controlContainer: ControlContainer) {}
+  constructor(
+    tokenService: TokenService,
+    cryptoFunctionService: CryptoFunctionService,
+    private formBuilder: FormBuilder,
+    private controlContainer: ControlContainer
+  ) {
+    this.vault = new Vault(cryptoFunctionService, tokenService);
+  }
 
   ngOnInit(): void {
     this._parentFormGroup = this.controlContainer.control as FormGroup;
     this._parentFormGroup.addControl("lastpassOptions", this.formGroup);
 
-    this.account$.pipe(takeUntil(this._destroy$)).subscribe((account) => {
-      const csvData = `foobar`;
-      this.csvDataLoaded.emit(csvData);
-    });
+    const _formIsValid$ = this.formGroup.statusChanges.pipe(filter((status) => status === "VALID"));
+    combineLatest([this.email$, this.password$, this.userType$, _formIsValid$])
+      .pipe(
+        switchMap(async ([email, password, userType]) =>
+          this.loadCSVData(email, password, userType)
+        ),
+        takeUntil(this._destroy$)
+      )
+      .subscribe();
   }
 
   ngOnDestroy(): void {
@@ -106,24 +125,55 @@ export class ImportLastPassComponent implements OnInit, OnDestroy {
     this._destroy$.complete();
   }
 
+  private async loadCSVData(email: string, password: string, userType: any) {
+    /** MP */
+    if (userType.type === 0) {
+      // this.vault.open(email, password)
+    }
+
+    /** Federated */
+    if (userType.type === 3) {
+      // this.vault.openFederated()
+    }
+
+    const csvData = `dummy data ${email} ${password} ${JSON.stringify(userType)}`;
+    // eslint-disable-next-line no-console
+    console.log(csvData);
+    this.csvDataLoaded.emit(csvData);
+  }
+
+  /**
+   * @param email Email of the account to find
+   * @returns Returns the UserType if it exists, otherwise returns `null`
+   */
+  private async getUserTypeByEmail(email: string) {
+    try {
+      await this.vault.setUserTypeContext(email);
+      return this.vault.userType;
+    } catch {
+      return null;
+    }
+  }
+
   /**
    * TODO:
    *
    * Give user feedback if the LP password + email combo is incorrect
    */
-  private validateLastPassCredentials(): AsyncValidatorFn {
+  private validatePasswordField(): AsyncValidatorFn {
+    const errors: ValidationErrors = {
+      badEmailOrPassword: {
+        message: "Incorrect email or password",
+      },
+    };
     return (_control: AbstractControl): Promise<ValidationErrors> => {
-      /** Dummy implementation */
-      return Promise.resolve({
-        badEmailOrPassword: {
-          message: "Incorrect email or password",
-        },
-      });
+      // return null if password is valid, else return errors. See `validateEmailField`
+      return Promise.resolve(errors);
     };
   }
 
   /** Gives user feedback if the LP account is found */
-  private validateAccount(): AsyncValidatorFn {
+  private validateEmailField(): AsyncValidatorFn {
     const errors: ValidationErrors = {
       accountNotFound: {
         message: "Account not found",
@@ -131,7 +181,7 @@ export class ImportLastPassComponent implements OnInit, OnDestroy {
     };
 
     return () =>
-      firstValueFrom(this.account$).then((account) => {
+      firstValueFrom(this.userType$).then((account) => {
         if (account === null) {
           /** We have to manually mark the form as touched because AsyncValidators only run on `blur`, regardless of `updateOn` */
           this.formGroup.controls.email.markAsTouched();
@@ -139,23 +189,5 @@ export class ImportLastPassComponent implements OnInit, OnDestroy {
         }
         return null;
       });
-  }
-
-  /**
-   * TODO:
-   * @param email Email of the account to find
-   * @returns Returns the account data if it exists, otherwise returns `null`
-   */
-  private getAccountByEmail(email: string) {
-    /** Dummy implementation */
-    return of(email).pipe(
-      delay(500),
-      map(() => {
-        if (email === "foo@bar.com") {
-          return { name: "Foobar", email };
-        }
-        return null;
-      })
-    );
   }
 }
