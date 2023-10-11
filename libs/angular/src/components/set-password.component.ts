@@ -1,6 +1,6 @@
 import { Directive } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { of, from } from "rxjs";
+import { of } from "rxjs";
 import { filter, first, switchMap, tap } from "rxjs/operators";
 
 import { ApiService } from "@bitwarden/common/abstractions/api.service";
@@ -88,7 +88,7 @@ export class SetPasswordComponent extends BaseChangePasswordComponent {
           } else {
             // Try to get orgSsoId from state as fallback
             // Note: this is primarily for the TDE user w/out MP obtains admin MP reset permission scenario.
-            return from(this.stateService.getUserSsoOrganizationIdentifier());
+            return this.stateService.getUserSsoOrganizationIdentifier();
           }
         }),
         tap((orgSsoId: string) => {
@@ -97,9 +97,7 @@ export class SetPasswordComponent extends BaseChangePasswordComponent {
           }
         }),
         filter((orgSsoId) => orgSsoId != null),
-        switchMap((orgSsoId: string) =>
-          from(this.organizationApiService.getAutoEnrollStatus(orgSsoId))
-        )
+        switchMap((orgSsoId: string) => this.organizationApiService.getAutoEnrollStatus(orgSsoId))
       )
       .subscribe({
         next: async (orgAutoEnrollStatusResponse: OrganizationAutoEnrollStatusResponse) => {
