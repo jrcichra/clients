@@ -4,23 +4,6 @@
     <input bitInput type="text" formControlName="email" />
     <bit-hint>{{ emailHint$ | async }}</bit-hint>
   </bit-form-field>
-  <bit-form-field *ngIf="!(isFederatedSSO$ | async)">
-    <bit-label>LastPass master password</bit-label>
-    <input
-      bitInput
-      type="password"
-      id="lp-password"
-      formControlName="password"
-      name="confirmFilePassword"
-    />
-    <button
-      type="button"
-      bitSuffix
-      bitIconButton
-      bitPasswordInputToggle
-      [(toggled)]="showPassword"
-    ></button>
-  </bit-form-field>
   <bit-form-control>
     <input
       bitCheckbox
