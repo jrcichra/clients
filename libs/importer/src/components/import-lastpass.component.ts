@@ -14,11 +14,11 @@ import {
   Subject,
   combineLatest,
   debounceTime,
+  distinctUntilChanged,
   filter,
   firstValueFrom,
   map,
-  merge,
-  shareReplay,
+  share,
   switchMap,
   takeUntil,
 } from "rxjs";
@@ -82,15 +82,24 @@ export class ImportLastPassComponent implements OnInit, OnDestroy {
   private vault: Vault;
 
   private password$ = this.formGroup.controls.password.valueChanges;
-  private email$ = this.formGroup.controls.email.valueChanges;
+
+  private email$ = this.formGroup.controls.email.valueChanges.pipe(distinctUntilChanged());
+  protected emailHint$ = this.formGroup.controls.email.statusChanges.pipe(
+    map((status) => {
+      if (status === "PENDING") {
+        return "Finding your account...";
+      }
+      if (status === "VALID") {
+        return "Account found. Ready to import.";
+      }
+    })
+  );
+
   private userType$ = this.email$.pipe(
     debounceTime(4000),
     switchMap((email) => this.getUserTypeByEmail(email)),
-    shareReplay({ refCount: true, bufferSize: 1 })
-  );
-  protected emailHint$ = merge(
-    this.email$.pipe(map((email) => (email ? "Finding your account..." : ""))),
-    this.userType$.pipe(map((account) => (account ? "Account found. Ready to import." : "")))
+    filter((userType) => userType !== null),
+    share()
   );
   protected isFederatedSSO$ = this.userType$.pipe(map((userType) => userType?.isFederated()));
 
@@ -183,7 +192,6 @@ export class ImportLastPassComponent implements OnInit, OnDestroy {
     return () =>
       firstValueFrom(this.userType$).then((account) => {
         if (account === null) {
-          /** We have to manually mark the form as touched because AsyncValidators only run on `blur`, regardless of `updateOn` */
           this.formGroup.controls.email.markAsTouched();
           return errors;
         }
