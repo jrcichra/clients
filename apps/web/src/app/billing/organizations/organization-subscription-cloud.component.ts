@@ -117,7 +117,7 @@ export class OrganizationSubscriptionCloudComponent implements OnInit, OnDestroy
 
     this.showSecretsManagerSubscribe =
       this.userOrg.canEditSubscription &&
-      this.sub?.plan?.supportsSecretsManager &&
+      this.sub?.plan?.SecretsManager &&
       !this.userOrg.useSecretsManager &&
       !this.subscription?.cancelled &&
       !this.subscriptionMarkedForCancel;

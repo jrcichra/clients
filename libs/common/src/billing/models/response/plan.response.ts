@@ -26,7 +26,6 @@ export class PlanResponse extends BaseResponse {
   displaySortOrder: number;
   legacyYear: number;
   disabled: boolean;
-  supportsSecretsManager: boolean;
   PasswordManager: PasswordManagerPlanFeaturesResponse;
   SecretsManager: SecretsManagerPlanFeaturesResponse;
 
@@ -55,7 +54,6 @@ export class PlanResponse extends BaseResponse {
     this.displaySortOrder = this.getResponseProperty("SortOrder");
     this.legacyYear = this.getResponseProperty("LegacyYear");
     this.disabled = this.getResponseProperty("Disabled");
-    this.supportsSecretsManager = this.getResponseProperty("SupportsSecretsManager");
     const passwordManager = this.getResponseProperty("PasswordManager");
     const secretsManager = this.getResponseProperty("SecretsManager");
     this.PasswordManager =
