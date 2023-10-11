@@ -46,7 +46,6 @@ export class LockComponent implements OnInit, OnDestroy {
 
   protected successRoute = "vault";
   protected forcePasswordResetRoute = "update-temp-password";
-  protected setPasswordRoute = "set-password";
   protected onSuccessfulSubmit: () => Promise<void>;
 
   private invalidPinAttempts = 0;
