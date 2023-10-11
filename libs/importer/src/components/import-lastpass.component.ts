@@ -98,7 +98,6 @@ export class ImportLastPassComponent implements OnInit, OnDestroy {
   private userType$ = this.email$.pipe(
     debounceTime(4000),
     switchMap((email) => this.getUserTypeByEmail(email)),
-    filter((userType) => userType !== null),
     share()
   );
   protected isFederatedSSO$ = this.userType$.pipe(map((userType) => userType?.isFederated()));
@@ -181,11 +180,10 @@ export class ImportLastPassComponent implements OnInit, OnDestroy {
     };
   }
 
-  /** Gives user feedback if the LP account is found */
   private validateEmailField(): AsyncValidatorFn {
     const errors: ValidationErrors = {
       accountNotFound: {
-        message: "Account not found",
+        message: "Cannot retrieve account",
       },
     };
 
