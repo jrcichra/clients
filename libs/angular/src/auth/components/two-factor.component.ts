@@ -297,7 +297,7 @@ export class TwoFactorComponent extends CaptchaProtectedComponent implements OnI
       acctDecryptionOpts.trustedDeviceOption.hasManageResetPasswordPermission
     ) {
       // Set flag so that auth guard can redirect to set password screen after decryption (trusted or untrusted device)
-      // Note: we cannot directly navigate in this scenario as we are in a pre-decryption state, and
+      // Note: we cannot directly navigate to the set password screen in this scenario as we are in a pre-decryption state, and
       // if you try to set a new MP before decrypting, you will invalidate the user's data by making a new user key.
       await this.stateService.setForceSetPasswordReason(
         ForceSetPasswordReason.TdeUserWithoutPasswordHasPasswordResetPermission
