@@ -258,12 +258,14 @@ export class ImportComponent implements OnInit, OnDestroy {
       return;
     }
 
+    /** Wait for pending AsyncValidators before submitting */
     if (this.formGroup.pending) {
       await firstValueFrom(
         this.formGroup.statusChanges.pipe(filter((status) => status !== "PENDING"))
       );
 
       await this.submit();
+      return;
     }
 
     await this.performImport();
