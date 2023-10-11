@@ -239,8 +239,12 @@ export class TwoFactorComponent extends CaptchaProtectedComponent implements OnI
     // - TDE login decryption options component
     // - Browser SSO on extension open
     await this.stateService.setUserSsoOrganizationIdentifier(this.orgIdentifier);
-
     this.loginService.clearValues();
+
+    // note: this flow affects both TDE & standard users
+    if (this.isForcePasswordResetRequired(authResult)) {
+      return await this.handleForcePasswordReset(this.orgIdentifier);
+    }
 
     const acctDecryptionOpts: AccountDecryptionOptions =
       await this.stateService.getAccountDecryptionOptions();
@@ -262,10 +266,6 @@ export class TwoFactorComponent extends CaptchaProtectedComponent implements OnI
     if (requireSetPassword || authResult.resetMasterPassword) {
       // Change implies going no password -> password in this case
       return await this.handleChangePasswordRequired(this.orgIdentifier);
-    }
-
-    if (this.isForcePasswordResetRequired(authResult)) {
-      return await this.handleForcePasswordReset(this.orgIdentifier);
     }
 
     return await this.handleSuccessfulLogin();
@@ -291,10 +291,6 @@ export class TwoFactorComponent extends CaptchaProtectedComponent implements OnI
     orgIdentifier: string,
     acctDecryptionOpts: AccountDecryptionOptions
   ): Promise<void> {
-    if (this.isForcePasswordResetRequired(authResult)) {
-      return await this.handleForcePasswordReset(orgIdentifier);
-    }
-
     // If user doesn't have a MP, but has reset password permission, they must set a MP
     if (
       !acctDecryptionOpts.hasMasterPassword &&

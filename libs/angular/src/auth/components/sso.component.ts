@@ -201,11 +201,18 @@ export class SsoComponent {
       // Everything after the 2FA check is considered a successful login
       // Just have to figure out where to send the user
 
-      // Save off the OrgSsoIdentifier for use in the TDE flows
+      // Save off the OrgSsoIdentifier for use in the TDE flows (or elsewhere)
       // - TDE login decryption options component
       // - Browser SSO on extension open
       // Note: you cannot set this in state before 2FA b/c there won't be an account in state.
       await this.stateService.setUserSsoOrganizationIdentifier(orgSsoIdentifier);
+
+      // Users enrolled in admin acct recovery can be forced to set a new password after
+      // having the admin set a temp password for them (affects TDE & standard users)
+      if (authResult.forcePasswordReset == ForceSetPasswordReason.AdminForcePasswordReset) {
+        // Weak password is not a valid scenario here b/c we cannot have evaluated a MP yet
+        return await this.handleForcePasswordReset(orgSsoIdentifier);
+      }
 
       const tdeEnabled = await this.isTrustedDeviceEncEnabled(
         acctDecryptionOpts.trustedDeviceOption
@@ -229,13 +236,6 @@ export class SsoComponent {
       if (requireSetPassword || authResult.resetMasterPassword) {
         // Change implies going no password -> password in this case
         return await this.handleChangePasswordRequired(orgSsoIdentifier);
-      }
-
-      // Users enrolled in admin acct recovery can be forced to set a new password after
-      // having the admin set a temp password for them
-      if (authResult.forcePasswordReset == ForceSetPasswordReason.AdminForcePasswordReset) {
-        // Weak password is not a valid scenario here b/c we cannot have evaluated a MP yet
-        return await this.handleForcePasswordReset(orgSsoIdentifier);
       }
 
       // Standard SSO login success case
@@ -273,13 +273,6 @@ export class SsoComponent {
     orgIdentifier: string,
     acctDecryptionOpts: AccountDecryptionOptions
   ): Promise<void> {
-    // TDE Users enrolled in admin acct recovery can be forced to set a new password after
-    // having the admin set a temp password for them
-    // Weak password is not a valid scenario here b/c we cannot have evaluated a MP yet even if they had one.
-    if (authResult.forcePasswordReset == ForceSetPasswordReason.AdminForcePasswordReset) {
-      return await this.handleForcePasswordReset(orgIdentifier);
-    }
-
     // If user doesn't have a MP, but has reset password permission, they must set a MP
     if (
       !acctDecryptionOpts.hasMasterPassword &&
