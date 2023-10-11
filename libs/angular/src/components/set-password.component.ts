@@ -9,6 +9,7 @@ import { OrganizationUserResetPasswordEnrollmentRequest } from "@bitwarden/commo
 import { OrganizationApiServiceAbstraction } from "@bitwarden/common/admin-console/abstractions/organization/organization-api.service.abstraction";
 import { PolicyApiServiceAbstraction } from "@bitwarden/common/admin-console/abstractions/policy/policy-api.service.abstraction";
 import { PolicyService } from "@bitwarden/common/admin-console/abstractions/policy/policy.service.abstraction";
+import { MasterPasswordPolicyOptions } from "@bitwarden/common/admin-console/models/domain/master-password-policy-options";
 import { OrganizationAutoEnrollStatusResponse } from "@bitwarden/common/admin-console/models/response/organization-auto-enroll-status.response";
 import { ForceSetPasswordReason } from "@bitwarden/common/auth/models/domain/force-set-password-reason";
 import { SetPasswordRequest } from "@bitwarden/common/auth/models/request/set-password.request";
@@ -97,20 +98,22 @@ export class SetPasswordComponent extends BaseChangePasswordComponent {
           }
         }),
         filter((orgSsoId) => orgSsoId != null),
-        switchMap((orgSsoId: string) => this.organizationApiService.getAutoEnrollStatus(orgSsoId))
+        switchMap((orgSsoId: string) => this.organizationApiService.getAutoEnrollStatus(orgSsoId)),
+        tap((orgAutoEnrollStatusResponse: OrganizationAutoEnrollStatusResponse) => {
+          this.orgId = orgAutoEnrollStatusResponse.id;
+          this.resetPasswordAutoEnroll = orgAutoEnrollStatusResponse.resetPasswordEnabled;
+        }),
+        switchMap((orgAutoEnrollStatusResponse: OrganizationAutoEnrollStatusResponse) =>
+          // Must get org id from response to get master password policy options
+          this.policyApiService.getMasterPasswordPolicyOptsForOrgUser(
+            orgAutoEnrollStatusResponse.id
+          )
+        ),
+        tap((masterPasswordPolicyOptions: MasterPasswordPolicyOptions) => {
+          this.enforcedPolicyOptions = masterPasswordPolicyOptions;
+        })
       )
       .subscribe({
-        next: async (orgAutoEnrollStatusResponse: OrganizationAutoEnrollStatusResponse) => {
-          try {
-            this.orgId = orgAutoEnrollStatusResponse.id;
-            this.resetPasswordAutoEnroll = orgAutoEnrollStatusResponse.resetPasswordEnabled;
-
-            this.enforcedPolicyOptions =
-              await this.policyApiService.getMasterPasswordPolicyOptsForOrgUser(this.orgId);
-          } catch (error) {
-            this.platformUtilsService.showToast("error", null, this.i18nService.t("errorOccurred"));
-          }
-        },
         error: () => {
           this.platformUtilsService.showToast("error", null, this.i18nService.t("errorOccurred"));
         },
