@@ -40,10 +40,10 @@ export class AuthGuard implements CanActivate {
       return this.router.createUrlTree(["/remove-password"]);
     }
 
-    const forcePasswordResetReason = await this.stateService.getForceSetPasswordReason();
+    const forceSetPasswordReason = await this.stateService.getForceSetPasswordReason();
 
     if (
-      forcePasswordResetReason ===
+      forceSetPasswordReason ===
         ForceSetPasswordReason.TdeUserWithoutPasswordHasPasswordResetPermission &&
       !routerState.url.includes("set-password")
     ) {
@@ -51,7 +51,7 @@ export class AuthGuard implements CanActivate {
     }
 
     if (
-      forcePasswordResetReason !== ForceSetPasswordReason.None &&
+      forceSetPasswordReason !== ForceSetPasswordReason.None &&
       !routerState.url.includes("update-temp-password")
     ) {
       return this.router.createUrlTree(["/update-temp-password"]);
