@@ -83,7 +83,7 @@
           https://bitwarden.com/help/import-from-lastpass/</a
         >
       </p>
-      <bit-radio-group formControlName="lastPassType">
+      <bit-radio-group *ngIf="showLastPassToggle" formControlName="lastPassType">
         <bit-radio-button class="tw-block" id="import-direct" value="direct">
           <bit-label>Import directly from LastPass</bit-label>
         </bit-radio-button>

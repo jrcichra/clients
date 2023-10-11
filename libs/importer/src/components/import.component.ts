@@ -22,6 +22,7 @@ import {
 import { PolicyService } from "@bitwarden/common/admin-console/abstractions/policy/policy.service.abstraction";
 import { PolicyType } from "@bitwarden/common/admin-console/enums";
 import { Organization } from "@bitwarden/common/admin-console/models/domain/organization";
+import { ClientType } from "@bitwarden/common/enums";
 import { CryptoService } from "@bitwarden/common/platform/abstractions/crypto.service";
 import { I18nService } from "@bitwarden/common/platform/abstractions/i18n.service";
 import { LogService } from "@bitwarden/common/platform/abstractions/log.service";
@@ -184,9 +185,15 @@ export class ImportComponent implements OnInit, OnDestroy {
     return this._importBlockedByPolicy;
   }
 
-  /** TODO: only show on desktop & web */
+  protected get showLastPassToggle(): boolean {
+    return (
+      this.format === "lastpasscsv" &&
+      (this.platformUtilsService.getClientType() === ClientType.Browser ||
+        this.platformUtilsService.getClientType() === ClientType.Desktop)
+    );
+  }
   protected get showLastPassOptions(): boolean {
-    return this.format === "lastpasscsv" && this.formGroup.controls.lastPassType.value === "direct";
+    return this.showLastPassToggle && this.formGroup.controls.lastPassType.value === "direct";
   }
 
   ngOnInit() {
