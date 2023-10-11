@@ -2,6 +2,7 @@ import { SelectionModel } from "@angular/cdk/collections";
 import { Component, EventEmitter, Input, Output } from "@angular/core";
 
 import { Organization } from "@bitwarden/common/admin-console/models/domain/organization";
+import { ConfigServiceAbstraction } from "@bitwarden/common/platform/abstractions/config/config.service.abstraction";
 import { CipherView } from "@bitwarden/common/vault/models/view/cipher.view";
 import { CollectionView } from "@bitwarden/common/vault/models/view/collection.view";
 import { TableDataSource } from "@bitwarden/components";
@@ -66,6 +67,8 @@ export class VaultItemsComponent {
   protected dataSource = new TableDataSource<VaultItem>();
   protected selection = new SelectionModel<VaultItem>(true, [], true);
 
+  constructor(private configService: ConfigServiceAbstraction) {}
+
   get showExtraColumn() {
     return this.showCollections || this.showGroups || this.showOwner;
   }
@@ -103,7 +106,7 @@ export class VaultItemsComponent {
     }
 
     const organization = this.allOrganizations.find((o) => o.id === collection.organizationId);
-    return await collection.canDelete(organization);
+    return await collection.canDelete(organization, this.configService);
   }
 
   protected toggleAll() {
