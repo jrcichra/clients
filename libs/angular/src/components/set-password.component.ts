@@ -223,7 +223,7 @@ export class SetPasswordComponent extends BaseChangePasswordComponent {
     // Set private key only for new JIT provisioned users in MP encryption orgs
     // Existing TDE users will have private key set on sync or on login
     if (
-      keyPair &&
+      keyPair !== null &&
       this.forceSetPasswordReason !=
         ForceSetPasswordReason.TdeUserWithoutPasswordHasPasswordResetPermission
     ) {
