@@ -92,12 +92,10 @@ export class SetPasswordComponent extends BaseChangePasswordComponent {
             return this.stateService.getUserSsoOrganizationIdentifier();
           }
         }),
-        tap((orgSsoId: string) => {
-          if (orgSsoId) {
-            this.orgSsoIdentifier = orgSsoId;
-          }
-        }),
         filter((orgSsoId) => orgSsoId != null),
+        tap((orgSsoId: string) => {
+          this.orgSsoIdentifier = orgSsoId;
+        }),
         switchMap((orgSsoId: string) => this.organizationApiService.getAutoEnrollStatus(orgSsoId)),
         tap((orgAutoEnrollStatusResponse: OrganizationAutoEnrollStatusResponse) => {
           this.orgId = orgAutoEnrollStatusResponse.id;
