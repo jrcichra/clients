@@ -2040,7 +2040,7 @@ export class StateService<
         await this.getAccount(
           this.reconcileOptions(options, await this.defaultOnDiskMemoryOptions())
         )
-      )?.profile?.forcePasswordResetReason ?? ForceSetPasswordReason.None
+      )?.profile?.forceSetPasswordReason ?? ForceSetPasswordReason.None
     );
   }
 
@@ -2051,7 +2051,7 @@ export class StateService<
     const account = await this.getAccount(
       this.reconcileOptions(options, await this.defaultOnDiskMemoryOptions())
     );
-    account.profile.forcePasswordResetReason = value;
+    account.profile.forceSetPasswordReason = value;
     await this.saveAccount(
       account,
       this.reconcileOptions(options, await this.defaultOnDiskMemoryOptions())
