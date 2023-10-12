@@ -2459,6 +2459,12 @@
   "importErrorDesc": {
     "message": "There was a problem with the data you tried to import. Please resolve the errors listed below in your source file and try again."
   },
+  "resolveTheErrorsBelowAndTryAgain": {
+    "message": "Resolve the errors below and try again."
+  },
+  "description": {
+    "message": "Description"
+  },
   "importSuccess": {
     "message": "Data successfully imported"
   },
