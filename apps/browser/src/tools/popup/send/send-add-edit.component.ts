@@ -29,9 +29,6 @@ export class SendAddEditComponent extends BaseAddEditComponent {
   // File visibility
   isFirefox = false;
   inPopout = false;
-  inSidebar = false;
-  isLinux = false;
-  isUnsupportedMac = false;
 
   constructor(
     i18nService: I18nService,
@@ -68,31 +65,7 @@ export class SendAddEditComponent extends BaseAddEditComponent {
   }
 
   get showFileSelector(): boolean {
-    return !(this.editMode || this.showFilePopoutMessage);
-  }
-
-  get showFilePopoutMessage(): boolean {
-    return (
-      !this.editMode &&
-      (this.showFirefoxFileWarning || this.showSafariFileWarning || this.showChromiumFileWarning)
-    );
-  }
-
-  get showFirefoxFileWarning(): boolean {
-    return this.isFirefox && !(this.inSidebar || this.inPopout);
-  }
-
-  get showSafariFileWarning(): boolean {
-    return this.isSafari && !this.inPopout;
-  }
-
-  // Only show this for Chromium based browsers in Linux and Mac > Big Sur
-  get showChromiumFileWarning(): boolean {
-    return (
-      (this.isLinux || this.isUnsupportedMac) &&
-      !this.isFirefox &&
-      !(this.inSidebar || this.inPopout)
-    );
+    return !this.editMode;
   }
 
   popOutWindow() {
@@ -103,10 +76,6 @@ export class SendAddEditComponent extends BaseAddEditComponent {
     // File visibility
     this.isFirefox = this.platformUtilsService.isFirefox();
     this.inPopout = this.popupUtilsService.inPopout(window);
-    this.inSidebar = this.popupUtilsService.inSidebar(window);
-    this.isLinux = window?.navigator?.userAgent.indexOf("Linux") !== -1;
-    this.isUnsupportedMac =
-      this.platformUtilsService.isChrome() && window?.navigator?.appVersion.includes("Mac OS X 11");
 
     // eslint-disable-next-line rxjs-angular/prefer-takeuntil, rxjs/no-async-subscribe
     this.route.queryParams.pipe(first()).subscribe(async (params) => {
