@@ -1,9 +1,24 @@
 import { ipcRenderer } from "electron";
 
-import { DeviceType } from "@bitwarden/common/enums/device-type.enum";
+import { DeviceType, KeySuffixOptions } from "@bitwarden/common/enums";
 
-import { BiometricMessage } from "../types/biometric-message";
+import { BiometricMessage, BiometricStorageAction } from "../types/biometric-message";
 import { isDev, isWindowsStore } from "../utils";
+
+const biometric = {
+  enabled: (userId: string): Promise<boolean> =>
+    ipcRenderer.invoke("biometric", {
+      action: BiometricStorageAction.EnabledForUser,
+      key: `${userId}_user_biometric`,
+      keySuffix: KeySuffixOptions.Biometric,
+      userId: userId,
+    } satisfies BiometricMessage),
+
+  osSupported: (): Promise<boolean> =>
+    ipcRenderer.invoke("biometric", {
+      action: BiometricStorageAction.OsSupported,
+    } satisfies BiometricMessage),
+};
 
 export default {
   versions: {
@@ -15,7 +30,7 @@ export default {
   reloadProcess: () => ipcRenderer.send("reload-process"),
 
   isWindowVisible: (): Promise<boolean> => ipcRenderer.invoke("windowVisible"),
-  biometric: (message: BiometricMessage) => ipcRenderer.invoke("biometric", message),
+  biometric,
 };
 
 function deviceType(): DeviceType {
