@@ -77,10 +77,12 @@ export class I18nMainService extends BaseI18nService {
   }
 
   private async readLanguageFile(formattedLocale: string): Promise<any> {
-    const filePath = path.join(
-      __dirname,
-      this.localesDirectory + "/" + formattedLocale + "/messages.json"
-    );
+    // Check that the provided locale only contains letters and dashes to avoid possible path traversal
+    if (!/^[a-zA-Z-]+$/.test(formattedLocale)) {
+      return Promise.resolve({});
+    }
+
+    const filePath = path.join(__dirname, this.localesDirectory, formattedLocale, "messages.json");
     const localesJson = await fs.readFile(filePath, "utf8");
     const locales = JSON.parse(localesJson.replace(/^\uFEFF/, "")); // strip the BOM
     return Promise.resolve(locales);
