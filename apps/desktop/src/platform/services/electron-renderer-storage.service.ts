@@ -2,18 +2,18 @@ import { AbstractStorageService } from "@bitwarden/common/platform/abstractions/
 
 export class ElectronRendererStorageService implements AbstractStorageService {
   get<T>(key: string): Promise<T> {
-    return ipc.platform.storageService("get", key);
+    return ipc.platform.storage.get(key);
   }
 
   has(key: string): Promise<boolean> {
-    return ipc.platform.storageService("has", key);
+    return ipc.platform.storage.has(key);
   }
 
   save(key: string, obj: any): Promise<any> {
-    return ipc.platform.storageService("save", key, obj);
+    return ipc.platform.storage.save(key, obj);
   }
 
   remove(key: string): Promise<any> {
-    return ipc.platform.storageService("remove", key);
+    return ipc.platform.storage.remove(key);
   }
 }
