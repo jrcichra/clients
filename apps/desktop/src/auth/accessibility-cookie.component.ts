@@ -53,7 +53,7 @@ export class AccessibilityCookieComponent {
 
   async checkForCookie() {
     this.hCaptchaWindow.close();
-    const [cookie] = await ipc.auth.getHcaptchaAccesibilityCookie();
+    const [cookie] = await ipc.auth.getHcaptchaAccessibilityCookie();
     if (cookie) {
       this.onCookieSavedSuccess();
     } else {
