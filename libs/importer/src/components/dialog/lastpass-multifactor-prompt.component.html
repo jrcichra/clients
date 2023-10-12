@@ -1,0 +1,32 @@
+<form [formGroup]="formGroup" [bitSubmit]="submit">
+  <bit-dialog>
+    <span bitDialogTitle>
+      {{ "LastPass multifactor authentication required" }}
+    </span>
+
+    <div bitDialogContent>
+      <p>Enter your one-time passcode from your authentication app</p>
+      <bit-form-field class="!tw-mb-0">
+        <bit-label>{{ "Passcode" }}</bit-label>
+        <input
+          bitInput
+          type="text"
+          name="passcode"
+          formControlName="passcode"
+          appAutofocus
+          appInputVerbatim
+        />
+        <bit-hint>Confirm your identity to continue</bit-hint>
+      </bit-form-field>
+    </div>
+
+    <ng-container bitDialogFooter>
+      <button bitButton buttonType="primary" type="submit" bitFormButton>
+        <span>{{ "submit" | i18n }}</span>
+      </button>
+      <button bitButton bitDialogClose buttonType="secondary" type="button" bitFormButton>
+        <span>{{ "cancel" | i18n }}</span>
+      </button>
+    </ng-container>
+  </bit-dialog>
+</form>

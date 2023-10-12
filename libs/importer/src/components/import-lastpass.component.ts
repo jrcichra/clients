@@ -13,6 +13,7 @@ import { map } from "rxjs";
 import { JslibModule } from "@bitwarden/angular/jslib.module";
 import { TokenService } from "@bitwarden/common/auth/abstractions/token.service";
 import { CryptoFunctionService } from "@bitwarden/common/platform/abstractions/crypto-function.service";
+import { LogService } from "@bitwarden/common/platform/abstractions/log.service";
 import {
   CalloutModule,
   CheckboxModule,
@@ -22,7 +23,16 @@ import {
   TypographyModule,
 } from "@bitwarden/components";
 
+import { ClientInfo } from "../importers/lastpass/access/client-info";
+import { Platform } from "../importers/lastpass/access/platform";
 import { Vault } from "../importers/lastpass/access/vault";
+
+// import { LastPassMultifactorPromptComponent } from "./dialog/lastpass-multifactor-prompt.component";
+import { LastPassPasswordPromptComponent } from "./dialog/lastpass-password-prompt.component";
+// import { Ui } from "../importers/lastpass/access/ui";
+// import { DuoDevice, DuoChoice, DuoStatus } from "../importers/lastpass/access/duo-ui";
+// import { OobResult } from "../importers/lastpass/access/oob-result";
+// import { OtpResult } from "../importers/lastpass/access/otp-result";
 
 /** TODO: add I18n */
 @Component({
@@ -53,7 +63,7 @@ export class ImportLastPassComponent implements OnInit, OnDestroy {
         updateOn: "submit",
       },
     ],
-    includeSharedFolders: [],
+    includeSharedFolders: [false],
   });
   protected emailHint$ = this.formGroup.controls.email.statusChanges.pipe(
     map((status) => {
@@ -70,7 +80,8 @@ export class ImportLastPassComponent implements OnInit, OnDestroy {
     cryptoFunctionService: CryptoFunctionService,
     private formBuilder: FormBuilder,
     private controlContainer: ControlContainer,
-    private dialogService: DialogService
+    private dialogService: DialogService,
+    private logService: LogService
   ) {
     this.vault = new Vault(cryptoFunctionService, tokenService);
   }
@@ -85,43 +96,64 @@ export class ImportLastPassComponent implements OnInit, OnDestroy {
   }
 
   submit(): AsyncValidatorFn {
-    return async () => {
-      const email = this.formGroup.value.email;
+    // class UiImplementation implements Ui {
+    //   provideGoogleAuthPasscode: () => OtpResult;
+    //   provideMicrosoftAuthPasscode: () => OtpResult;
+    //   provideYubikeyPasscode: () => OtpResult;
+    //   approveLastPassAuth: () => OobResult;
+    //   approveDuo: () => OobResult;
+    //   approveSalesforceAuth: () => OobResult;
+    //   chooseDuoFactor: (devices: [DuoDevice]) => DuoChoice;
+    //   provideDuoPasscode: (device: DuoDevice) => string;
+    //   updateDuoStatus: (status: DuoStatus, text: string) => void;
+    // }
 
+    return async () => {
       try {
-        await this.vault.setUserTypeContext(email);
-      } catch {
+        const email = this.formGroup.value.email;
+
+        try {
+          await this.vault.setUserTypeContext(email);
+        } catch {
+          return {
+            accountNotFound: {
+              message: "Cannot retrieve account",
+            },
+          };
+        }
+
+        await this.vault.setUserTypeContext(email).catch();
+
+        if (this.vault.userType.isFederated()) {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          // const passcode = await LastPassMultifactorPromptComponent.open(this.dialogService);
+          // await this.vault.openFederated()
+          return {
+            errors: {
+              message: "Federated login is not yet supported.",
+            },
+          };
+        } else {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const password = await LastPassPasswordPromptComponent.open(this.dialogService);
+          const clientInfo = new ClientInfo();
+          clientInfo.description = "";
+          clientInfo.id = "";
+          clientInfo.platform = Platform.Desktop;
+          await this.vault.open(email, password, clientInfo, null);
+        }
+
+        const csvData = this.vault.accountsToExportedCsvString();
+        this.csvDataLoaded.emit(csvData);
+        return null;
+      } catch (error) {
+        this.logService.error(`LP importer error: ${error?.message || error}`);
         return {
-          accountNotFound: {
-            message: "Cannot retrieve account",
+          errors: {
+            message: `An error has occurred.`,
           },
         };
       }
-
-      if (this.vault.userType.isFederated()) {
-        // TODO placeholder dialog
-        await this.dialogService.openSimpleDialog({
-          title: "Enter 2fa",
-          type: "info",
-          content: "Please enter your 2fa",
-        });
-
-        // await this.vault.openFederated()
-      } else {
-        // TODO placeholder dialog
-        await this.dialogService.openSimpleDialog({
-          title: "Enter password",
-          type: "info",
-          content: "Please enter your password",
-        });
-
-        // await this.vault.open(email, '');
-      }
-
-      // const csvData = this.vault.accountsToExportedCsvString()
-      const csvData = `csv data ${email}`;
-      this.csvDataLoaded.emit(csvData);
-      return null;
     };
   }
 }
