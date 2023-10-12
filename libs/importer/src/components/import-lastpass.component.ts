@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, EventEmitter, OnInit, Output } from "@angular/core";
+import { Component, EventEmitter, OnDestroy, OnInit, Output } from "@angular/core";
 import {
   AsyncValidatorFn,
   ControlContainer,
@@ -40,7 +40,7 @@ import { Vault } from "../importers/lastpass/access/vault";
     CheckboxModule,
   ],
 })
-export class ImportLastPassComponent implements OnInit {
+export class ImportLastPassComponent implements OnInit, OnDestroy {
   private vault: Vault;
 
   private _parentFormGroup: FormGroup;
@@ -80,7 +80,11 @@ export class ImportLastPassComponent implements OnInit {
     this._parentFormGroup.addControl("lastpassOptions", this.formGroup);
   }
 
-  private submit(): AsyncValidatorFn {
+  ngOnDestroy(): void {
+    this._parentFormGroup.removeControl("lastpassOptions");
+  }
+
+  submit(): AsyncValidatorFn {
     return async () => {
       const email = this.formGroup.value.email;
 

@@ -1,4 +1,4 @@
-<form [formGroup]="formGroup">
+<form [formGroup]="formGroup" (keydown.enter)="$event.preventDefault()">
   <bit-form-field>
     <bit-label>LastPass email</bit-label>
     <input bitInput type="text" formControlName="email" />
