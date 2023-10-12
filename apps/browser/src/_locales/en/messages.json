@@ -2451,7 +2451,7 @@
   },
   "importData": {
     "message": "Import data",
-    "description": "Used for the desktop menu item and the header of the import dialog"
+    "description": "Used for the header of the import dialog, the import button and within the file-password-prompt"
   },
   "importError": {
     "message": "Import error"
