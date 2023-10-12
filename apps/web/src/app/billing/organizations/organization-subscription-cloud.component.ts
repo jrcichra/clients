@@ -94,17 +94,17 @@ export class OrganizationSubscriptionCloudComponent implements OnInit, OnDestroy
       this.sub = await this.organizationApiService.getSubscription(this.organizationId);
       this.lineItems = this.sub?.subscription?.items;
       if (this.lineItems && this.lineItems.length) {
-        this.lineItems.forEach((item) => {
-          const itemTotalAmount = item.amount * item.quantity;
-          const seatPriceTotal = this.sub.plan?.SecretsManager?.seatPrice * item.quantity;
-          const additionalPriceTotal =
-            this.sub.plan?.SecretsManager?.additionalPricePerServiceAccount * item.quantity;
-          item.productName =
-            itemTotalAmount === seatPriceTotal || itemTotalAmount === additionalPriceTotal
-              ? "SecretsManager"
-              : "PasswordManager";
-        });
-        this.lineItems = this.lineItems?.sort(sortSubscriptionItems) ?? [];
+        this.lineItems = this.lineItems
+          .map((item) => {
+            const itemTotalAmount = item.amount * item.quantity;
+            const seatPriceTotal = this.sub.plan?.SecretsManager?.seatPrice * item.quantity;
+            item.productName =
+              itemTotalAmount === seatPriceTotal || item.name.includes("Service Accounts")
+                ? "SecretsManager"
+                : "PasswordManager";
+            return item;
+          })
+          .sort(sortSubscriptionItems);
       }
     }
 
