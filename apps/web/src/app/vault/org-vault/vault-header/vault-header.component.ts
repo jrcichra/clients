@@ -6,6 +6,7 @@ import { OrganizationService } from "@bitwarden/common/admin-console/abstraction
 import { Organization } from "@bitwarden/common/admin-console/models/domain/organization";
 import { ProductType } from "@bitwarden/common/enums";
 import { TreeNode } from "@bitwarden/common/models/domain/tree-node";
+import { ConfigServiceAbstraction } from "@bitwarden/common/platform/abstractions/config/config.service.abstraction";
 import { I18nService } from "@bitwarden/common/platform/abstractions/i18n.service";
 import { DialogService, SimpleDialogOptions } from "@bitwarden/components";
 
@@ -61,7 +62,8 @@ export class VaultHeaderComponent {
     private i18nService: I18nService,
     private dialogService: DialogService,
     private collectionAdminService: CollectionAdminService,
-    private router: Router
+    private router: Router,
+    private configService: ConfigServiceAbstraction
   ) {}
 
   get title() {
@@ -171,7 +173,7 @@ export class VaultHeaderComponent {
     }
 
     // Otherwise, check if we can delete the specified collection
-    return await this.collection.node.canDelete(this.organization);
+    return await this.collection.node.canDelete(this.organization, this.configService);
   }
 
   deleteCollection() {
