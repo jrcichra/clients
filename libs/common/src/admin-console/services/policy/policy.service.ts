@@ -219,7 +219,7 @@ export class PolicyService implements InternalPolicyServiceAbstraction {
   }
 
   mapPolicyFromResponse(policyResponse: PolicyResponse): Policy | null {
-    if (policyResponse == null || policyResponse.data == null) {
+    if (policyResponse?.data == null) {
       return null;
     }
     const policyData = new PolicyData(policyResponse);
@@ -227,7 +227,7 @@ export class PolicyService implements InternalPolicyServiceAbstraction {
   }
 
   mapPoliciesFromToken(policiesResponse: ListResponse<PolicyResponse>): Policy[] {
-    if (policiesResponse == null || policiesResponse.data == null) {
+    if (policiesResponse?.data == null) {
       return null;
     }
 
