@@ -2450,6 +2450,9 @@
       }
     }
   },
+  "total": {
+    "message": "Total"
+  },
   "importFormatError": {
     "message": "Data is not formatted correctly. Please check your import file and try again."
   },
