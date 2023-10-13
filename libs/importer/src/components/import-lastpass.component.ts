@@ -152,60 +152,79 @@ export class ImportLastPassComponent implements OnInit, OnDestroy {
     };
   }
 
-  async handleImport() {
+  private async handleImport() {
     if (this.vault.userType.isFederated()) {
-      this.oidcClient = new OidcClient({
-        authority: this.vault.userType.openIDConnectAuthorityBase,
-        client_id: this.vault.userType.openIDConnectClientId,
-        // TODO: this is different per client
-        redirect_uri: "bitwarden://sso-callback-lp",
-        response_type: "code",
-        scope: this.vault.userType.oidcScope,
-        response_mode: "query",
-        loadUserInfo: true,
-      });
-
-      const request = await this.oidcClient.createSigninRequest({
-        state: {
-          email: this.formGroup.controls.email.value,
-          // Anything else that we need to preserve in userState?
-        },
-        nonce: await this.passwordGenerationService.generatePassword({
-          length: 20,
-          uppercase: true,
-          lowercase: true,
-          number: true,
-        }),
-      });
-      this.platformUtilsService.launchUri(request.url);
-
-      // TODO: do something while waiting on SSO to callback and finish?
-      // Need to return code and state from the SSO callback
-
-      const oidcCode = "";
-      const oidcState = "";
-      const response = await this.oidcClient.processSigninResponse(
-        this.oidcClient.settings.redirect_uri + "&code=" + oidcCode + "&state=" + oidcState
-      );
-      const userState = response.userState as any;
-
-      const federatedUser = new FederatedUserContext();
-      federatedUser.idToken = response.access_token;
-      federatedUser.accessToken = response.access_token;
-      federatedUser.idpUserInfo = response.profile;
-      federatedUser.username = userState.email;
-
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      // const passcode = await LastPassMultifactorPromptComponent.open(this.dialogService);
-      // await this.vault.openFederated(federatedUser, ClientInfo.createClientInfo(), null);
-    } else {
-      // TODO Pass in to handleImport?
-      const email = this.formGroup.controls.email.value;
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const password = await LastPassPasswordPromptComponent.open(this.dialogService);
-      await this.vault.open(email, password, ClientInfo.createClientInfo(), null);
+      await this.handleFederatedLogin();
+      return;
     }
 
+    await this.handleStandardImport();
+  }
+
+  private async handleStandardImport() {
+    // TODO Pass in to handleImport?
+    const email = this.formGroup.controls.email.value;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const password = await LastPassPasswordPromptComponent.open(this.dialogService);
+    await this.vault.open(email, password, ClientInfo.createClientInfo(), null);
+
+    this.transformCSV();
+  }
+
+  private async handleFederatedLogin() {
+    this.oidcClient = new OidcClient({
+      authority: this.vault.userType.openIDConnectAuthorityBase,
+      client_id: this.vault.userType.openIDConnectClientId,
+      // TODO: this is different per client
+      redirect_uri: "bitwarden://sso-callback-lp",
+      response_type: "code",
+      scope: this.vault.userType.oidcScope,
+      response_mode: "query",
+      loadUserInfo: true,
+    });
+
+    const request = await this.oidcClient.createSigninRequest({
+      state: {
+        email: this.formGroup.controls.email.value,
+        // Anything else that we need to preserve in userState?
+      },
+      nonce: await this.passwordGenerationService.generatePassword({
+        length: 20,
+        uppercase: true,
+        lowercase: true,
+        number: true,
+      }),
+    });
+    this.platformUtilsService.launchUri(request.url);
+    //TODO include Simpledialog await
+  }
+
+  //TODO Call this when message is received from callback
+  private async handleFederatedImport() {
+    // TODO: do something while waiting on SSO to callback and finish?
+    // Need to return code and state from the SSO callback
+
+    const oidcCode = "";
+    const oidcState = "";
+    const response = await this.oidcClient.processSigninResponse(
+      this.oidcClient.settings.redirect_uri + "&code=" + oidcCode + "&state=" + oidcState
+    );
+    const userState = response.userState as any;
+
+    const federatedUser = new FederatedUserContext();
+    federatedUser.idToken = response.access_token;
+    federatedUser.accessToken = response.access_token;
+    federatedUser.idpUserInfo = response.profile;
+    federatedUser.username = userState.email;
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    // const passcode = await LastPassMultifactorPromptComponent.open(this.dialogService);
+    await this.vault.openFederated(federatedUser, ClientInfo.createClientInfo(), null);
+
+    this.transformCSV();
+  }
+
+  private transformCSV() {
     const csvData = this.vault.accountsToExportedCsvString(
       this.formGroup.value.includeSharedFolders
     );
