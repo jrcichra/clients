@@ -9,7 +9,7 @@ import {
   Validators,
 } from "@angular/forms";
 import { OidcClient, Log as OidcLog } from "oidc-client-ts";
-import { map } from "rxjs";
+import { firstValueFrom, map } from "rxjs";
 
 import { JslibModule } from "@bitwarden/angular/jslib.module";
 import { TokenService } from "@bitwarden/common/auth/abstractions/token.service";
@@ -31,6 +31,7 @@ import { ClientInfo, Vault } from "../importers/lastpass/access";
 import { FederatedUserContext } from "../importers/lastpass/access/models";
 
 // import { ImportErrorDialogComponent } from "./dialog";
+import { LastPassAwaitSSODialogComponent } from "./dialog/lastpass-await-sso-dialog.component";
 import { LastPassPasswordPromptComponent } from "./dialog/lastpass-password-prompt.component";
 // import { Ui } from "../importers/lastpass/access/ui";
 // import { DuoDevice, DuoChoice, DuoStatus } from "../importers/lastpass/access/duo-ui";
@@ -194,7 +195,19 @@ export class ImportLastPassComponent implements OnInit, OnDestroy {
       }),
     });
     this.platformUtilsService.launchUri(request.url);
-    //TODO include Simpledialog await
+
+    const cancelDialogRef = LastPassAwaitSSODialogComponent.open(this.dialogService);
+    const cancelled = firstValueFrom(cancelDialogRef.closed).then((didCancel) => {
+      throw Error("SSO auth cancelled");
+    });
+
+    return Promise.race<{
+      oidcCode: string;
+      oidcState: string;
+    }>([
+      cancelled,
+      // SSOMessageCallbackPromise
+    ]);
   }
 
   //TODO Call this when message is received from callback
