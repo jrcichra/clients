@@ -154,7 +154,9 @@ export class ImportLastPassComponent implements OnInit, OnDestroy {
       await this.vault.open(email, password, ClientInfo.createClientInfo(), null);
     }
 
-    const csvData = this.vault.accountsToExportedCsvString();
+    const csvData = this.vault.accountsToExportedCsvString(
+      this.formGroup.value.includeSharedFolders
+    );
     this.csvDataLoaded.emit(csvData);
   }
 }

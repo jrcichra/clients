@@ -85,11 +85,18 @@ export class Vault {
     throw new Error("Cannot determine LastPass user type.");
   }
 
-  accountsToExportedCsvString(): string {
+  accountsToExportedCsvString(skipShared = false): string {
     if (this.accounts == null) {
       throw new Error("Vault has not opened any accounts.");
     }
-    const exportedAccounts = this.accounts.map((a) => new ExportedAccount(a));
+
+    const exportedAccounts = this.accounts
+      .filter((a) => !a.isShared || (a.isShared && !skipShared))
+      .map((a) => new ExportedAccount(a));
+
+    if (exportedAccounts.length === 0) {
+      throw new Error("No accounts to transform");
+    }
     return papa.unparse(exportedAccounts);
   }
 
