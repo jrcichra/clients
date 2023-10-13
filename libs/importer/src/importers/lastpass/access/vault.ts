@@ -87,7 +87,7 @@ export class Vault {
 
   accountsToExportedCsvString(): string {
     if (this.accounts == null) {
-      throw "Vault has not opened any accounts.";
+      throw new Error("Vault has not opened any accounts.");
     }
     const exportedAccounts = this.accounts.map((a) => new ExportedAccount(a));
     return papa.unparse(exportedAccounts);
