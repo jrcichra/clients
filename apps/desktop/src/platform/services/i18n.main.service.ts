@@ -77,8 +77,8 @@ export class I18nMainService extends BaseI18nService {
   }
 
   private async readLanguageFile(formattedLocale: string): Promise<any> {
-    // Check that the provided locale only contains letters and dashes to avoid possible path traversal
-    if (!/^[a-zA-Z-]+$/.test(formattedLocale)) {
+    // Check that the provided locale only contains letters and dashes and underscores to avoid possible path traversal
+    if (!/^[a-zA-Z_-]+$/.test(formattedLocale)) {
       return Promise.resolve({});
     }
 
