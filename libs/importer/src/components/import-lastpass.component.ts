@@ -23,9 +23,7 @@ import {
   TypographyModule,
 } from "@bitwarden/components";
 
-import { ClientInfo } from "../importers/lastpass/access/client-info";
-import { Platform } from "../importers/lastpass/access/platform";
-import { Vault } from "../importers/lastpass/access/vault";
+import { ClientInfo, Vault } from "../importers/lastpass/access";
 
 // import { LastPassMultifactorPromptComponent } from "./dialog/lastpass-multifactor-prompt.component";
 import { LastPassPasswordPromptComponent } from "./dialog/lastpass-password-prompt.component";
@@ -136,11 +134,7 @@ export class ImportLastPassComponent implements OnInit, OnDestroy {
         } else {
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const password = await LastPassPasswordPromptComponent.open(this.dialogService);
-          const clientInfo = new ClientInfo();
-          clientInfo.description = "";
-          clientInfo.id = "";
-          clientInfo.platform = Platform.Desktop;
-          await this.vault.open(email, password, clientInfo, null);
+          await this.vault.open(email, password, ClientInfo.createClientInfo(), null);
         }
 
         const csvData = this.vault.accountsToExportedCsvString();
