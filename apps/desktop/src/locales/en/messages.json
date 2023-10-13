@@ -2432,6 +2432,12 @@
   "importErrorDesc": {
     "message": "There was a problem with the data you tried to import. Please resolve the errors listed below in your source file and try again."
   },
+  "resolveTheErrorsBelowAndTryAgain": {
+    "message": "Resolve the errors below and try again."
+  },
+  "description": {
+    "message": "Description"
+  },
   "importSuccess": {
     "message": "Data successfully imported"
   },
@@ -2443,6 +2449,9 @@
         "example": "2"
       }
     }
+  },
+  "total": {
+    "message": "Total"
   },
   "importFormatError": {
     "message": "Data is not formatted correctly. Please check your import file and try again."
@@ -2502,5 +2511,14 @@
         "example": "LastPass (csv)"
       }
     }
+  },
+  "confirmVaultImport": {
+    "message": "Confirm vault import"
+  },
+  "confirmVaultImportDesc": {
+    "message": "This file is password-protected. Please enter the file password to import data."
+  },
+  "confirmFilePassword": {
+    "message": "Confirm file password"
   }
 }
