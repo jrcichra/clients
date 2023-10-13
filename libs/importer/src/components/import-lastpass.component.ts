@@ -26,6 +26,7 @@ import {
 import { ClientInfo, Vault } from "../importers/lastpass/access";
 
 // import { LastPassMultifactorPromptComponent } from "./dialog/lastpass-multifactor-prompt.component";
+import { ImportErrorDialogComponent } from "./dialog";
 import { LastPassPasswordPromptComponent } from "./dialog/lastpass-password-prompt.component";
 // import { Ui } from "../importers/lastpass/access/ui";
 // import { DuoDevice, DuoChoice, DuoStatus } from "../importers/lastpass/access/duo-ui";
@@ -122,24 +123,7 @@ export class ImportLastPassComponent implements OnInit, OnDestroy {
 
         await this.vault.setUserTypeContext(email).catch();
 
-        if (this.vault.userType.isFederated()) {
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          // const passcode = await LastPassMultifactorPromptComponent.open(this.dialogService);
-          // await this.vault.openFederated()
-          return {
-            errors: {
-              message: "Federated login is not yet supported.",
-            },
-          };
-        } else {
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          const password = await LastPassPasswordPromptComponent.open(this.dialogService);
-          await this.vault.open(email, password, ClientInfo.createClientInfo(), null);
-        }
-
-        const csvData = this.vault.accountsToExportedCsvString();
-        this.csvDataLoaded.emit(csvData);
-        return null;
+        return await this.handleImport();
       } catch (error) {
         this.logService.error(`LP importer error: ${error?.message || error}`);
         return {
@@ -149,5 +133,36 @@ export class ImportLastPassComponent implements OnInit, OnDestroy {
         };
       }
     };
+  }
+
+  async handleImport() {
+    try {
+      if (this.vault.userType.isFederated()) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        // const passcode = await LastPassMultifactorPromptComponent.open(this.dialogService);
+        // await this.vault.openFederated()
+        return {
+          errors: {
+            message: "Federated login is not yet supported.",
+          },
+        };
+      } else {
+        // TODO Pass in to handleImport?
+        const email = this.formGroup.controls.email.value;
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const password = await LastPassPasswordPromptComponent.open(this.dialogService);
+        await this.vault.open(email, password, ClientInfo.createClientInfo(), null);
+      }
+
+      const csvData = this.vault.accountsToExportedCsvString();
+      this.csvDataLoaded.emit(csvData);
+
+      //TODO Don't have AsyncValidator logic here
+      return null;
+    } catch (error) {
+      this.dialogService.open<unknown, Error>(ImportErrorDialogComponent, {
+        data: error,
+      });
+    }
   }
 }
