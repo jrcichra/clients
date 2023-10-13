@@ -123,7 +123,9 @@ export class ImportLastPassComponent implements OnInit, OnDestroy {
 
         await this.vault.setUserTypeContext(email).catch();
 
-        return await this.handleImport();
+        await this.handleImport();
+
+        return null;
       } catch (error) {
         this.dialogService.open<unknown, Error>(ImportErrorDialogComponent, {
           data: error,
@@ -140,14 +142,10 @@ export class ImportLastPassComponent implements OnInit, OnDestroy {
 
   async handleImport() {
     if (this.vault.userType.isFederated()) {
+      throw new Error("Federated login is not yet supported.");
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       // const passcode = await LastPassMultifactorPromptComponent.open(this.dialogService);
-      // await this.vault.openFederated()
-      return {
-        errors: {
-          message: "Federated login is not yet supported.",
-        },
-      };
+      // await this.vault.openFederated(null, ClientInfo.createClientInfo(), null);
     } else {
       // TODO Pass in to handleImport?
       const email = this.formGroup.controls.email.value;
@@ -158,8 +156,5 @@ export class ImportLastPassComponent implements OnInit, OnDestroy {
 
     const csvData = this.vault.accountsToExportedCsvString();
     this.csvDataLoaded.emit(csvData);
-
-    //TODO Don't have AsyncValidator logic here
-    return null;
   }
 }
