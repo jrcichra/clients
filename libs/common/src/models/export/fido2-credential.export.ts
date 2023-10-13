@@ -37,18 +37,17 @@ export class Fido2CredentialExport {
   }
 
   static toDomain(req: Fido2CredentialExport, domain = new Fido2Credential()) {
-    domain.credentialId = req.credentialId != null ? new EncString(req.credentialId) : null;
-    domain.keyType = req.keyType != null ? new EncString(req.keyType) : null;
-    domain.keyAlgorithm = req.keyAlgorithm != null ? new EncString(req.keyAlgorithm) : null;
-    domain.keyCurve = req.keyCurve != null ? new EncString(req.keyCurve) : null;
-    domain.keyValue = req.keyValue != null ? new EncString(req.keyValue) : null;
-    domain.rpId = req.rpId != null ? new EncString(req.rpId) : null;
-    domain.userHandle = req.userHandle != null ? new EncString(req.userHandle) : null;
-    domain.counter = req.counter != null ? new EncString(req.counter) : null;
-    domain.rpName = req.rpName != null ? new EncString(req.rpName) : null;
-    domain.userDisplayName =
-      req.userDisplayName != null ? new EncString(req.userDisplayName) : null;
-    domain.discoverable = req.discoverable != null ? new EncString(req.discoverable) : null;
+    domain.credentialId = EncString.fromNullable(req.credentialId);
+    domain.keyType = EncString.fromNullable(req.keyType);
+    domain.keyAlgorithm = EncString.fromNullable(req.keyAlgorithm);
+    domain.keyCurve = EncString.fromNullable(req.keyCurve);
+    domain.keyValue = EncString.fromNullable(req.keyValue);
+    domain.rpId = EncString.fromNullable(req.rpId);
+    domain.userHandle = EncString.fromNullable(req.userHandle);
+    domain.counter = EncString.fromNullable(req.counter);
+    domain.rpName = EncString.fromNullable(req.rpName);
+    domain.userDisplayName = EncString.fromNullable(req.userDisplayName);
+    domain.discoverable = EncString.fromNullable(req.discoverable);
     domain.creationDate = req.creationDate;
     return domain;
   }
