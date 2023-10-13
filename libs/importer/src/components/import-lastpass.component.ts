@@ -8,12 +8,15 @@ import {
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
+import { OidcClient, Log as OidcLog } from "oidc-client-ts";
 import { map } from "rxjs";
 
 import { JslibModule } from "@bitwarden/angular/jslib.module";
 import { TokenService } from "@bitwarden/common/auth/abstractions/token.service";
 import { CryptoFunctionService } from "@bitwarden/common/platform/abstractions/crypto-function.service";
 import { LogService } from "@bitwarden/common/platform/abstractions/log.service";
+import { PlatformUtilsService } from "@bitwarden/common/platform/abstractions/platform-utils.service";
+import { PasswordGenerationService } from "@bitwarden/common/tools/generator/password";
 import {
   CalloutModule,
   CheckboxModule,
@@ -24,8 +27,9 @@ import {
 } from "@bitwarden/components";
 
 import { ClientInfo, Vault } from "../importers/lastpass/access";
-
 // import { LastPassMultifactorPromptComponent } from "./dialog/lastpass-multifactor-prompt.component";
+import { FederatedUserContext } from "../importers/lastpass/access/models";
+
 import { ImportErrorDialogComponent } from "./dialog";
 import { LastPassPasswordPromptComponent } from "./dialog/lastpass-password-prompt.component";
 // import { Ui } from "../importers/lastpass/access/ui";
@@ -52,6 +56,8 @@ import { LastPassPasswordPromptComponent } from "./dialog/lastpass-password-prom
 export class ImportLastPassComponent implements OnInit, OnDestroy {
   private vault: Vault;
 
+  private oidcClient: OidcClient;
+
   private _parentFormGroup: FormGroup;
   protected formGroup = this.formBuilder.group({
     email: [
@@ -77,12 +83,17 @@ export class ImportLastPassComponent implements OnInit, OnDestroy {
   constructor(
     tokenService: TokenService,
     cryptoFunctionService: CryptoFunctionService,
+    private platformUtilsService: PlatformUtilsService,
+    private passwordGenerationService: PasswordGenerationService,
     private formBuilder: FormBuilder,
     private controlContainer: ControlContainer,
     private dialogService: DialogService,
     private logService: LogService
   ) {
     this.vault = new Vault(cryptoFunctionService, tokenService);
+
+    OidcLog.setLogger(console);
+    OidcLog.setLevel(OidcLog.DEBUG);
   }
 
   ngOnInit(): void {
@@ -109,7 +120,7 @@ export class ImportLastPassComponent implements OnInit, OnDestroy {
 
     return async () => {
       try {
-        const email = this.formGroup.value.email;
+        const email = this.formGroup.controls.email.value;
 
         try {
           await this.vault.setUserTypeContext(email);
@@ -121,6 +132,7 @@ export class ImportLastPassComponent implements OnInit, OnDestroy {
           };
         }
 
+        // TODO: Why is this called twice?
         await this.vault.setUserTypeContext(email).catch();
 
         await this.handleImport();
@@ -142,10 +154,50 @@ export class ImportLastPassComponent implements OnInit, OnDestroy {
 
   async handleImport() {
     if (this.vault.userType.isFederated()) {
-      throw new Error("Federated login is not yet supported.");
+      this.oidcClient = new OidcClient({
+        authority: this.vault.userType.openIDConnectAuthorityBase,
+        client_id: this.vault.userType.openIDConnectClientId,
+        // TODO: this is different per client
+        redirect_uri: "bitwarden://sso-callback-lp",
+        response_type: "code",
+        scope: this.vault.userType.oidcScope,
+        response_mode: "query",
+        loadUserInfo: true,
+      });
+
+      const request = await this.oidcClient.createSigninRequest({
+        state: {
+          email: this.formGroup.controls.email.value,
+          // Anything else that we need to preserve in userState?
+        },
+        nonce: await this.passwordGenerationService.generatePassword({
+          length: 20,
+          uppercase: true,
+          lowercase: true,
+          number: true,
+        }),
+      });
+      this.platformUtilsService.launchUri(request.url);
+
+      // TODO: do something while waiting on SSO to callback and finish?
+      // Need to return code and state from the SSO callback
+
+      const oidcCode = "";
+      const oidcState = "";
+      const response = await this.oidcClient.processSigninResponse(
+        this.oidcClient.settings.redirect_uri + "&code=" + oidcCode + "&state=" + oidcState
+      );
+      const userState = response.userState as any;
+
+      const federatedUser = new FederatedUserContext();
+      federatedUser.idToken = response.access_token;
+      federatedUser.accessToken = response.access_token;
+      federatedUser.idpUserInfo = response.profile;
+      federatedUser.username = userState.email;
+
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       // const passcode = await LastPassMultifactorPromptComponent.open(this.dialogService);
-      // await this.vault.openFederated(null, ClientInfo.createClientInfo(), null);
+      // await this.vault.openFederated(federatedUser, ClientInfo.createClientInfo(), null);
     } else {
       // TODO Pass in to handleImport?
       const email = this.formGroup.controls.email.value;
