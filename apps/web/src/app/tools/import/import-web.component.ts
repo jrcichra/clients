@@ -1,29 +1,19 @@
-import { CommonModule } from "@angular/common";
 import { Component, OnInit } from "@angular/core";
-import { ReactiveFormsModule } from "@angular/forms";
-import { ActivatedRoute, Router, RouterModule } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { firstValueFrom } from "rxjs";
 
-import { JslibModule } from "@bitwarden/angular/jslib.module";
 import {
   OrganizationService,
   canAccessVaultTab,
 } from "@bitwarden/common/admin-console/abstractions/organization/organization.service.abstraction";
-import { AsyncActionsModule, ButtonModule } from "@bitwarden/components";
 import { ImportComponent } from "@bitwarden/importer/ui";
+
+import { SharedModule } from "../../shared";
 
 @Component({
   templateUrl: "import-web.component.html",
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    RouterModule,
-    JslibModule,
-    AsyncActionsModule,
-    ButtonModule,
-    ImportComponent,
-  ],
+  imports: [SharedModule, ImportComponent],
 })
 export class ImportWebComponent implements OnInit {
   protected routeOrgId: string = null;
