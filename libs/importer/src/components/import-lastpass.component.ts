@@ -16,7 +16,7 @@ import { TokenService } from "@bitwarden/common/auth/abstractions/token.service"
 import { CryptoFunctionService } from "@bitwarden/common/platform/abstractions/crypto-function.service";
 import { LogService } from "@bitwarden/common/platform/abstractions/log.service";
 import { PlatformUtilsService } from "@bitwarden/common/platform/abstractions/platform-utils.service";
-import { PasswordGenerationService } from "@bitwarden/common/tools/generator/password";
+import { PasswordGenerationServiceAbstraction } from "@bitwarden/common/tools/generator/password";
 import {
   CalloutModule,
   CheckboxModule,
@@ -30,7 +30,7 @@ import { ClientInfo, Vault } from "../importers/lastpass/access";
 // import { LastPassMultifactorPromptComponent } from "./dialog/lastpass-multifactor-prompt.component";
 import { FederatedUserContext } from "../importers/lastpass/access/models";
 
-import { ImportErrorDialogComponent } from "./dialog";
+// import { ImportErrorDialogComponent } from "./dialog";
 import { LastPassPasswordPromptComponent } from "./dialog/lastpass-password-prompt.component";
 // import { Ui } from "../importers/lastpass/access/ui";
 // import { DuoDevice, DuoChoice, DuoStatus } from "../importers/lastpass/access/duo-ui";
@@ -84,7 +84,7 @@ export class ImportLastPassComponent implements OnInit, OnDestroy {
     tokenService: TokenService,
     cryptoFunctionService: CryptoFunctionService,
     private platformUtilsService: PlatformUtilsService,
-    private passwordGenerationService: PasswordGenerationService,
+    private passwordGenerationService: PasswordGenerationServiceAbstraction,
     private formBuilder: FormBuilder,
     private controlContainer: ControlContainer,
     private dialogService: DialogService,
@@ -136,13 +136,14 @@ export class ImportLastPassComponent implements OnInit, OnDestroy {
 
         return null;
       } catch (error) {
-        this.dialogService.open<unknown, Error>(ImportErrorDialogComponent, {
-          data: error,
-        });
-        this.logService.error(`LP importer error: ${error?.message || error}`);
+        // this.dialogService.open<unknown, Error>(ImportErrorDialogComponent, {
+        //   data: error,
+        // });
+        const message = error?.message || error;
+        this.logService.error(`LP importer error: ${message}`);
         return {
           errors: {
-            message: `An error has occurred.`,
+            message,
           },
         };
       }
