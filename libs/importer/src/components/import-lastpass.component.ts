@@ -132,9 +132,6 @@ export class ImportLastPassComponent implements OnInit, OnDestroy {
           };
         }
 
-        // TODO: Why is this called twice?
-        await this.vault.setUserTypeContext(email).catch();
-
         await this.handleImport();
 
         return null;
