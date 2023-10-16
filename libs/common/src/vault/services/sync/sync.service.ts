@@ -3,6 +3,7 @@ import { SettingsService } from "../../../abstractions/settings.service";
 import { InternalOrganizationServiceAbstraction } from "../../../admin-console/abstractions/organization/organization.service.abstraction";
 import { InternalPolicyService } from "../../../admin-console/abstractions/policy/policy.service.abstraction";
 import { ProviderService } from "../../../admin-console/abstractions/provider.service";
+import { OrganizationUserType } from "../../../admin-console/enums";
 import { OrganizationData } from "../../../admin-console/models/data/organization.data";
 import { PolicyData } from "../../../admin-console/models/data/policy.data";
 import { ProviderData } from "../../../admin-console/models/data/provider.data";
@@ -334,9 +335,9 @@ export class SyncService implements SyncServiceAbstraction {
     }
   }
 
-  private async setForceSetPasswordReasonIfNeeded(response: ProfileResponse) {
+  private async setForceSetPasswordReasonIfNeeded(profileResponse: ProfileResponse) {
     // The `forcePasswordReset` flag indicates an admin has reset the user's password and must be updated
-    if (response.forcePasswordReset) {
+    if (profileResponse.forcePasswordReset) {
       await this.stateService.setForceSetPasswordReason(
         ForceSetPasswordReason.AdminForcePasswordReset
       );
@@ -345,10 +346,25 @@ export class SyncService implements SyncServiceAbstraction {
     const acctDecryptionOpts: AccountDecryptionOptions =
       await this.stateService.getAccountDecryptionOptions();
 
+    // Even though TDE users should only be in a single org (per single org policy), check
+    // through all orgs for the manageResetPassword permission. If they have it in any org,
+    // they should be forced to set a password.
+    let hasManageResetPasswordPermission = false;
+    for (const org of profileResponse.organizations) {
+      const isAdmin = org.type === OrganizationUserType.Admin;
+      const isOwner = org.type === OrganizationUserType.Owner;
+
+      // Note: apparently permissions only come down populated for custom roles.
+      if (isAdmin || isOwner || (org.permissions && org.permissions.manageResetPassword)) {
+        hasManageResetPasswordPermission = true;
+        break;
+      }
+    }
+
     if (
       acctDecryptionOpts.trustedDeviceOption !== undefined &&
       !acctDecryptionOpts.hasMasterPassword &&
-      response.hasManageResetPasswordPermission
+      hasManageResetPasswordPermission
     ) {
       // TDE user w/out MP went from having no password reset permission to having it.
       // Must set the force password reset reason so the auth guard will redirect to the set password page.
