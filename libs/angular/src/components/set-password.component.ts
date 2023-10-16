@@ -21,6 +21,7 @@ import { MessagingService } from "@bitwarden/common/platform/abstractions/messag
 import { PlatformUtilsService } from "@bitwarden/common/platform/abstractions/platform-utils.service";
 import { StateService } from "@bitwarden/common/platform/abstractions/state.service";
 import { Utils } from "@bitwarden/common/platform/misc/utils";
+import { AccountDecryptionOptions } from "@bitwarden/common/platform/models/domain/account";
 import { EncString } from "@bitwarden/common/platform/models/domain/enc-string";
 import { MasterKey, UserKey } from "@bitwarden/common/platform/models/domain/symmetric-crypto-key";
 import { PasswordGenerationServiceAbstraction } from "@bitwarden/common/tools/generator/password";
@@ -191,9 +192,6 @@ export class SetPasswordComponent extends BaseChangePasswordComponent {
 
       await this.formPromise;
 
-      // Clear force set password reason to allow navigation back to vault.
-      await this.stateService.setForceSetPasswordReason(ForceSetPasswordReason.None);
-
       if (this.onSuccessfulChangePassword != null) {
         this.onSuccessfulChangePassword();
       } else {
@@ -214,6 +212,16 @@ export class SetPasswordComponent extends BaseChangePasswordComponent {
     userKey: [UserKey, EncString],
     keyPair: [string, EncString] | null
   ) {
+    // Clear force set password reason to allow navigation back to vault.
+    await this.stateService.setForceSetPasswordReason(ForceSetPasswordReason.None);
+
+    // User now has a password so update account decryption options in state
+    const acctDecryptionOpts: AccountDecryptionOptions =
+      await this.stateService.getAccountDecryptionOptions();
+
+    acctDecryptionOpts.hasMasterPassword = true;
+    await this.stateService.setAccountDecryptionOptions(acctDecryptionOpts);
+
     await this.stateService.setKdfType(this.kdf);
     await this.stateService.setKdfConfig(this.kdfConfig);
     await this.cryptoService.setMasterKey(masterKey);
