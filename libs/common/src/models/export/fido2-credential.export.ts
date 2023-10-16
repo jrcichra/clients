@@ -31,7 +31,7 @@ export class Fido2CredentialExport {
    * Converts a Fido2CredentialExport object to its view representation.
    * @param req - The Fido2CredentialExport object to be converted.
    * @param view - (Optional) The Fido2CredentialView object to popualte with Fido2CredentialExport data
-   * @returns Fido2CredentialView
+   * @returns Fido2CredentialView - The populated view, or a new instance if none was provided.
    */
   static toView(req: Fido2CredentialExport, view = new Fido2CredentialView()) {
     view.credentialId = req.credentialId;
@@ -53,7 +53,7 @@ export class Fido2CredentialExport {
    * Converts a Fido2CredentialExport object to its domain representation.
    * @param req - The Fido2CredentialExport object to be converted.
    * @param domain - (Optional) The Fido2Credential object to popualte with Fido2CredentialExport data
-   * @returns Fido2Credential
+   * @returns Fido2Credential - The populated domain, or a new instance if none was provided.
    */
   static toDomain(req: Fido2CredentialExport, domain = new Fido2Credential()) {
     domain.credentialId = req.credentialId != null ? new EncString(req.credentialId) : null;
@@ -86,9 +86,9 @@ export class Fido2CredentialExport {
   creationDate: Date;
 
   /**
-   * Constructs a new Fid2CredentialExport instance
-   * @param o - The credential to populate the new instance.
-   * Optional and can be either Fido2CredentialView or Fido2Credential
+   * Constructs a new Fid2CredentialExport instance.
+   *
+   * @param o - The credential storing the data being exported. When not provided, an empty export is created instead.
    */
   constructor(o?: Fido2CredentialView | Fido2Credential) {
     if (o == null) {
