@@ -7,10 +7,10 @@ import { BrowserPopoutWindowService as BrowserPopupWindowServiceInterface } from
 class BrowserPopoutWindowService implements BrowserPopupWindowServiceInterface {
   private singleActionPopoutTabIds: Record<string, number> = {};
   private defaultPopoutWindowOptions: chrome.windows.CreateData = {
-    type: "normal",
+    type: "popup",
     focused: true,
-    width: 500,
-    height: 800,
+    width: 375,
+    height: 628,
   };
 
   async openUnlockPrompt(senderWindowId: number) {
