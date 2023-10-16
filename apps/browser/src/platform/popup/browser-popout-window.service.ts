@@ -9,8 +9,8 @@ class BrowserPopoutWindowService implements BrowserPopupWindowServiceInterface {
   private defaultPopoutWindowOptions: chrome.windows.CreateData = {
     type: "popup",
     focused: true,
-    width: 375,
-    height: 628,
+    width: 380,
+    height: 630,
   };
 
   async openUnlockPrompt(senderWindowId: number) {
