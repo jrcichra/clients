@@ -43,10 +43,6 @@ export class EncString implements Encrypted {
     return this.encryptedString;
   }
 
-  static fromNullable(val: string | null) {
-    return val ? new EncString(val) : null;
-  }
-
   static fromJSON(obj: Jsonify<EncString>): EncString {
     if (obj == null) {
       return null;
